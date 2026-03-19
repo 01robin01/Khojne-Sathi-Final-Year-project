@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Report Lost Item
+{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/report-lost.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+{% block sidebar %}
+
+
+{% endblock sidebar %}
+<!-- PAGE CONTENT -->
+<div class="container my-5">
+  <div class="page-wrapper">
+
+    <!-- TITLE -->
+    <div class="text-center mb-4">
+      <div class="alert-icon mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <h3 class="fw-bold">Report Lost Item</h3>
+      <p class="text-muted mb-4">
+        Help us help you find your lost item by providing as much detail as possible.
+      </p>
+
+      <!-- DIVIDER -->
+      <hr class="section-divider">
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+      <form>
+
+        <div class="mb-3">
+          <label class="form-label">Object Title *</label>
+          <input type="text" class="form-control"
+            placeholder="e.g., iPhone 14 Pro, Black Leather Wallet, Blue Backpack">
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Category *</label>
+            <select class="form-select">
+              <option selected disabled>Select a category</option>
+              <option>Electronics</option>
+              <option>Personal Items</option>
+              <option>Bags & Luggage</option>
+              <option>Keys & Accessories</option>
+              <option>Documents</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">City *</label>
+            <select class="form-select">
+              <option selected disabled>Select a city</option>
+              <option>Kathmandu</option>
+              <option>Lalitpur</option>
+              <option>Bhaktapur</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Exact Address or Location *</label>
+          <input type="text" class="form-control"
+            placeholder="e.g., Central Park, Coffee Shop on Main Street">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Upload Image</label>
+          <div class="upload-box text-center">
+            <i class="bi bi-cloud-upload fs-3"></i>
+            <p class="mt-2 mb-1">Drop your image here, or browse</p>
+            <small class="text-muted">Supports JPG, JPEG, PNG (Max 10MB)</small><br>
+            <input type="file" class="d-none" id="upload">
+            <label for="upload" class="btn btn-primary btn-sm mt-2">Choose File</label>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Detailed Description *</label>
+          <textarea class="form-control" rows="4"
+            placeholder="Provide color, brand, size, distinctive features, etc."></textarea>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">All fields marked with * are required</small>
+          <button class="btn btn-primary">
+            <i class="bi bi-send"></i> Submit Report
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- TIPS BOX -->
+    <div class="tips-box mt-5">
+      <div class="d-flex gap-2">
+        <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+        <div>
+          <h6 class="fw-bold mb-2">Tips for Better Results</h6>
+          <ul class="mb-0">
+            <li>Be as specific as possible with your description</li>
+            <li>Include unique identifying features</li>
+            <li>Upload a clear, recent photo if available</li>
+            <li>Provide the exact location where you last saw the item</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,169 @@
+{% extends 'base-admin.html' %}
+{% load static %}
+{% block title %}Admin Lost Items{% endblock title %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/admin-claim.css' %}">
+{% endblock extra_css %}
+{% block content %}
+
+    <!-- Main Content -->
+    <main class="content flex-grow-1">
+
+        <!-- Page Header -->
+        <div class="page-header mb-4">
+            <h4 class="fw-semibold mb-1">Claim Details</h4>
+            <p class="text-muted mb-0">
+                Review item information and verify ownership
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- LEFT -->
+            <div class="col-lg-7">
+
+                <!-- Item Info -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle text-primary"></i>
+                        <strong>Item Information</strong>
+                    </div>
+                    <div class="card-body">
+
+                        <img src="https://images.unsplash.com/photo-1520975922284-6a36a4c38c1d"
+                             class="img-fluid claim-img mb-3">
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <small class="text-muted">Object Title</small>
+                                <p class="fw-semibold">Black Leather Wallet</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">City</small>
+                                <p>Kathmandu</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <small class="text-muted">Category</small>
+                                <p>Wallet</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Item Type</small><br>
+                                <span class="badge bg-success-subtle text-success">Found</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <small class="text-muted">Address</small>
+                            <p>New Road, Near Ratna Park</p>
+                        </div>
+
+                        <div class="mb-2">
+                            <small class="text-muted">Description</small>
+                            <p class="text-muted">
+                                Black leather wallet found near the bus stop.
+                                Contains cards and some cash.
+                            </p>
+                        </div>
+
+                        <small class="text-muted">
+                            Posted by <a href="#">@anesh_sharma</a>
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Claimer Info -->
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="bi bi-person-check text-success"></i>
+                        <strong>Claimer Information</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">Full Name</small>
+                                <p>Sita Adhikari</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Contact Number</small>
+                                <p>+977 98XXXXXXXX</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <small class="text-muted">Email</small>
+                            <p>sita.adhikari@gmail.com</p>
+                        </div>
+
+                        <small class="text-muted">
+                            Claim Submitted: January 15, 2025
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="col-lg-5">
+
+                <!-- Proof -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check text-info"></i>
+                        <strong>Ownership Proof</strong>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">Proof Description</small>
+                        <p class="text-muted">
+                            Black leather wallet with scratch on the back.
+                            Contains citizenship card, driving license,
+                            and two NIC Asia debit cards.
+                        </p>
+
+                        <div class="proof-grid">
+                            <div class="proof-card">
+                                <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+                            </div>
+                            <div class="proof-card">
+                                <img src="https://images.unsplash.com/photo-1492724441997-5dc865305da7">
+                            </div>
+                            <div class="proof-card placeholder">
+                                <i class="bi bi-image"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision -->
+                <div class="card shadow-sm decision-card">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="bi bi-gavel text-danger"></i>
+                        <strong>Admin Decision</strong>
+                    </div>
+                    <div class="card-body">
+                        <label class="form-label small fw-semibold">
+                            Admin Remarks
+                        </label>
+                        <textarea class="form-control mb-4" rows="3"
+                                  placeholder="Reason for verification or rejection (optional)">
+                        </textarea>
+
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-outline-danger">
+                                <i class="bi bi-x-circle"></i> Reject Claim
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Verify Claim
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+</div>
+
+{% endblock content %}

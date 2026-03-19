@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock extra_css %}
+
+
+
+{% block content %}
+  
+    <!-- MAIN CONTENT -->
+    <main class="col-md-10 p-4">
+
+      <!-- HEADER -->
+      <div class="welcome-box mb-4">
+        <h3>Hello, Rabin 👋</h3>
+        <p>Welcome back to your Lost & Found dashboard</p>
+      </div>
+
+      <!-- FILTER (IDs ADDED ONLY) -->
+      <div class="mb-4">
+        <button id="lostBtn" class="btn btn-primary me-2">All Lost Items</button>
+        <button id="foundBtn" class="btn btn-outline-secondary">All Found Items</button>
+      </div>
+
+      <!-- ITEMS GRID -->
+      <div class="row g-4">
+
+        <!-- CARD 1 -->
+        <div class="col-md-4 item" data-status="lost">
+          <div class="card item-card">
+            <img src="/media/images/brown leather wallet.jpg" class="card-img-top">
+            <div class="card-body">
+              <span class="badge bg-danger">Lost</span>
+              <h6 class="mt-2">Black Leather Wallet</h6>
+              <p class="small text-muted">
+                <i class="bi bi-tag"></i> Personal Items <br>
+                <i class="bi bi-geo-alt"></i> Central Park, NY
+              </p>
+              <button class="btn btn-primary w-100">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="col-md-4 item" data-status="lost">
+          <div class="card item-card">
+            <img src="/media/images/blue backpack.jpg" class="card-img-top">
+            <div class="card-body">
+              <span class="badge bg-danger">Lost</span>
+              <h6 class="mt-2">Blue Backpack</h6>
+              <p class="small text-muted">
+                <i class="bi bi-tag"></i> Bags & Luggage <br>
+                <i class="bi bi-geo-alt"></i> University Campus
+              </p>
+              <button class="btn btn-primary w-100">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="col-md-4 item" data-status="lost">
+          <div class="card item-card">
+            <img src="/media/images/iphone 14.jpg" class="card-img-top">
+            <div class="card-body">
+              <span class="badge bg-danger">Lost</span>
+              <h6 class="mt-2">iPhone 13 Pro</h6>
+              <p class="small text-muted">
+                <i class="bi bi-tag"></i> Electronics <br>
+                <i class="bi bi-geo-alt"></i> Coffee Shop
+              </p>
+              <button class="btn btn-primary w-100">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOUND ITEM EXAMPLE -->
+        <div class="col-md-4 item" data-status="found">
+          <div class="card item-card">
+            <img src="/media/images/car keys.jpg" class="card-img-top">
+            <div class="card-body">
+              <span class="badge bg-success">Found</span>
+              <h6 class="mt-2">Car Keys</h6>
+              <p class="small text-muted">
+                <i class="bi bi-tag"></i> Accessories <br>
+                <i class="bi bi-geo-alt"></i> Parking Area
+              </p>
+              <button class="btn btn-primary w-100">View Details</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+{% endblock content %}
+
+{% block extra_js %}
+  
+
+<script>
+  const lostBtn = document.getElementById("lostBtn");
+  const foundBtn = document.getElementById("foundBtn");
+  const items = document.querySelectorAll(".item");
+
+  lostBtn.addEventListener("click", () => {
+    items.forEach(item => {
+      item.style.display = item.dataset.status === "lost" ? "block" : "none";
+    });
+
+    lostBtn.classList.add("btn-primary");
+    lostBtn.classList.remove("btn-outline-secondary");
+
+    foundBtn.classList.add("btn-outline-secondary");
+    foundBtn.classList.remove("btn-primary");
+  });
+
+  foundBtn.addEventListener("click", () => {
+    items.forEach(item => {
+      item.style.display = item.dataset.status === "found" ? "block" : "none";
+    });
+
+    foundBtn.classList.add("btn-primary");
+    foundBtn.classList.remove("btn-outline-secondary");
+
+    lostBtn.classList.add("btn-outline-secondary");
+    lostBtn.classList.remove("btn-primary");
+  });
+
+  // Default: show lost items
+  window.onload = () => lostBtn.click();
+</script>
+{% endblock extra_js %}
+
+
+

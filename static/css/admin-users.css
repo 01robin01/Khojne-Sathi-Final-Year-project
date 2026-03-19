@@ -1,0 +1,101 @@
+body {
+    background-color: #f8f9fb;
+    font-size: 14px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 20px;
+}
+
+.logo {
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.sidebar .nav-link {
+    color: #374151;
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+}
+
+.sidebar .nav-link i {
+    margin-right: 8px;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background-color: #eef2ff;
+    color: #4f46e5;
+}
+
+/* Admin profile */
+.admin-profile {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-profile img {
+    border-radius: 50%;
+}
+
+.admin-profile p {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Content */
+.content {
+    padding: 30px;
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Table */
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.table thead th {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+
+/* Actions */
+.action {
+    font-size: 13px;
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+.action.view {
+    color: #2563eb;
+}
+
+.action.suspend {
+    color: #f59e0b;
+}
+
+.action.activate {
+    color: #10b981;
+}
+
+.action.delete {
+    color: #ef4444;
+}

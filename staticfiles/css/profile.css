@@ -1,0 +1,90 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f8fafc;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: #f9fafb;                 /* light grey like prototype */
+  border-right: 1px solid #e5e7eb;
+  min-height: calc(100vh - 56px);
+  padding: 0;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 14px;
+}
+
+/* MENU */
+/* SIDEBAR */
+.sidebar {
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  min-height: calc(100vh - 56px - 240px);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+}
+
+/* TOP MENU */
+.sidebar-top {
+  flex: 1;
+}
+
+/* MENU ITEMS */
+.sidebar-menu .nav-item {
+  margin-bottom: 8px;
+}
+
+.sidebar-menu .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sidebar-menu .nav-link i {
+  font-size: 16px;
+}
+
+/* ACTIVE ITEM */
+.sidebar-menu .nav-item.active .nav-link {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+/* HOVER */
+.sidebar-menu .nav-link:hover {
+  background: #f1f5f9;
+}
+
+/* LOGOUT */
+.sidebar-logout {
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #dc2626;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-logout:hover {
+  background: #fee2e2;
+}
+
+
+/* FOOTER */
+.footer {
+  background: #0f172a;
+  padding: 40px 0;
+}

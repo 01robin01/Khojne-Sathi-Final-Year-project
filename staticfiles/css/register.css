@@ -1,0 +1,62 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  background: linear-gradient(135deg, #3b5bdb, #6d28d9);
+  align-items: center;
+  justify-content: center;
+}
+
+/* REGISTER CARD */
+.register-card {
+  max-width: 420px;
+  padding: 30px;
+}
+
+/* ICON */
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  font-size: 24px;
+}
+
+/* DIVIDER */
+.divider {
+  text-align: center;
+  position: relative;
+}
+
+.divider span {
+  background: white;
+  padding: 0 10px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #e5e7eb;
+  z-index: -1;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

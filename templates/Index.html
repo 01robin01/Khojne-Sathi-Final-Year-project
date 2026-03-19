@@ -1,0 +1,163 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% block sidebar %}
+
+
+{% endblock sidebar %}
+  <section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      
+      <div class="col-md-6">
+        <h1 class="fw-bold">
+          Find Your Lost Items,<br>
+          Help Others Find Theirs
+        </h1>
+        <p class="text-muted mt-3">
+          Join Nepal's largest lost and found community. Report lost items,
+          help reunite found items with their owners.
+        </p>
+
+        <div class="mt-4">
+          <button class="btn btn-primary me-2">
+           <a href="{% url 'report_lost' %}"><i class="bi bi-search"></i> Report Lost Item
+          </button></a> 
+          <a href="{% url 'report_found' %}"><button class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> Report Found Item
+          </button></a>
+        </div>
+      </div>
+
+      <div class="col-md-6 text-center">
+        <img src="{% static 'images/heroimage.jpg' %}" class="img-fluid hero-img" alt="Hero">
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% comment %} <!-- ================= STATS ================= -->
+<section class="stats-section text-center">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <h4>1,234</h4>
+        <p>Lost Phones</p>
+      </div>
+      <div class="col-md-3">
+        <h4>892</h4>
+        <p>Lost Wallets</p>
+      </div>
+      <div class="col-md-3">
+        <h4>567</h4>
+        <p>Lost Keys</p>
+      </div>
+      <div class="col-md-3">
+        <h4>345</h4>
+        <p>Lost Documents</p>
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+<!-- ================= RECENT ITEMS ================= -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between mb-4">
+      <h3 class="fw-bold ">Found or Lost these items???</h3>
+      <a href="#" class="text-primary">View All Items →</a>
+    </div>
+
+    <div class="row g-4">
+      <!-- Card -->
+      <div class="col-md-3">
+        <div class="card">
+          <img src="/media/images/iphone 14.jpg" class="card-img-top">
+          <div class="card-body">
+            <span class="badge bg-danger">Lost</span>
+            <h6 class="mt-2">iPhone 14 Pro</h6>
+            <p class="text-muted small">Ratna Park, Kathmandu</p>
+            <button class="btn btn-primary btn-sm w-100">Contact Owner</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card">
+          <img src="/media/images/brown leather wallet.jpg" class="card-img-top">
+          <div class="card-body">
+            <span class="badge bg-success">Found</span>
+            <h6 class="mt-2">Brown Leather Wallet</h6>
+            <p class="text-muted small">Thamel, Kathmandu</p>
+            <button class="btn btn-primary btn-sm w-100">Claim Item</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card">
+          <img src="/media/images/car keys.jpg" class="card-img-top">
+          <div class="card-body">
+            <span class="badge bg-success">Found</span>
+            <h6 class="mt-2">Car Keys</h6>
+            <p class="text-muted small">Durbar Marg</p>
+            <button class="btn btn-primary btn-sm w-100">Claim Item</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card">
+          <img src="/media/images/black bag.jpg" class="card-img-top">
+          <div class="card-body">
+            <span class="badge bg-danger">Lost</span>
+            <h6 class="mt-2">Black Backpack</h6>
+            <p class="text-muted small">New Road</p>
+            <button class="btn btn-primary btn-sm w-100">Contact Owner</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ================= HOW IT WORKS ================= -->
+<section class="py-5 text-center" id="how-it-works">
+  <div class="container">
+    <h2 class="fw-bold">How Khojne Sathi Works</h2>
+    <p class="text-muted mb-5">Simple steps to reunite lost items</p>
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="step-circle">1</div>
+        <h5 class="mt-3">Report Your Item</h5>
+        <p class="text-muted">Add details, photos, and location</p>
+      </div>
+      <div class="col-md-4">
+        <div class="step-circle">2</div>
+        <h5 class="mt-3">Smart Matching</h5>
+        <p class="text-muted">AI matches lost & found items</p>
+      </div>
+      <div class="col-md-4">
+        <div class="step-circle">3</div>
+        <h5 class="mt-3">Get Connected</h5>
+        <p class="text-muted">Contact securely and retrieve items</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ================= CTA ================= -->
+<section class="cta-section text-center">
+  <div class="container">
+    <h2 class="fw-bold text-white">Ready to Help Your Community?</h2>
+    <p class="text-white-50">
+      Join thousands of Nepalis helping reunite lost items
+    </p>
+    <a href="{% url "register" %}"><button class="btn btn-light mt-3">Sign Up Now</button></a>
+  </div>
+</section>
+{% endblock content %}

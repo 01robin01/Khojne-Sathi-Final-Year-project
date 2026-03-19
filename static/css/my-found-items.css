@@ -1,0 +1,104 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f8fafc;
+}
+
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-weight: 500;
+  color: #6b7280;
+  position: relative;
+}
+
+.tab.active {
+  color: #4338ca;
+}
+
+.tab.active::after {
+  content: "";
+  height: 2px;
+  background: #4338ca;
+  width: 100%;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+}
+
+.tab span {
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 20px;
+  margin-left: 6px;
+}
+
+/* ITEM CARD */
+.item-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+.item-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.item-body {
+  padding: 14px;
+}
+
+.item-body h6 {
+  font-weight: 600;
+}
+
+/* BADGES */
+.badge.published {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.matched {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+/* ACTIONS */
+.item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.item-actions .btn {
+  font-size: 12px;
+}
+
+.product-slider div {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 0 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.page-box {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}

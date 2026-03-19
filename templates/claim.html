@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Claim Item{% endblock %}
+{% block content %}
+<body>
+
+<div class="claim-container">
+
+  <h3 class="text-center fw-bold mb-1">Claim This Item</h3>
+  <p class="text-center text-muted mb-4">Submit proof to claim ownership of the item</p>
+
+  <div class="claim-box">
+
+    <div class="item-card mb-4">
+      <img src="https://via.placeholder.com/80" alt="image">
+      <div>
+        <h6 class="fw-bold mb-1">Brown Leather Wallet</h6>
+        <small>Category: Personal Items</small><br>
+        <small>City: Kathmandu</small><br>
+        <small>Posted as: <span class="badge bg-success">Found</span></small>
+      </div>
+    </div>
+
+    <form>
+      <div class="mb-3">
+        <label>Full Name *</label>
+        <input type="text" class="form-control" placeholder="Enter your full name">
+      </div>
+
+      <div class="mb-3">
+        <label>Email Address *</label>
+        <input type="email" class="form-control" value="user@example.com">
+      </div>
+
+      <div class="mb-3">
+        <label>Contact Number *</label>
+        <input type="text" class="form-control" placeholder="Enter your contact number">
+      </div>
+
+      <div class="mb-3">
+        <label>Proof of Ownership *</label>
+        <textarea class="form-control" rows="3" placeholder="Describe any unique details, serial number, IMEI, scratches, marks, purchase details, etc."></textarea>
+      </div>
+
+     <div class="mb-3">
+          <label class="form-label">Upload Image</label>
+          <div class="upload-box text-center">
+            <i class="bi bi-cloud-upload fs-3"></i>
+            <p class="mt-2 mb-1">Drop your image here, or browse</p>
+            <small class="text-muted">Supports JPG, JPEG, PNG (Max 10MB)</small><br>
+            <input type="file" class="d-none" id="upload">
+            <label for="upload" class="btn btn-primary btn-sm mt-2">Choose File</label>
+          </div>
+        </div>
+
+      <div class="text-end">
+        <button type="button" class="btn btn-light me-2">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Claim</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+</body>
+{% endblock content %}

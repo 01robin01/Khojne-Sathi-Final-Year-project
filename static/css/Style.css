@@ -1,0 +1,142 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* HERO */
+.hero-section {
+  background: #eef4ff;
+  padding: 80px 0;
+}
+
+.hero-img {
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  border-radius: 16px;
+}
+
+/* STATS */
+.stats-section {
+  padding: 40px 0;
+}
+
+.stats-section h4 {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* HOW IT WORKS */
+.step-circle {
+  width: 50px;
+  height: 50px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  line-height: 50px;
+  margin: auto;
+  font-weight: bold;
+}
+.search-box .form-control {
+  border-radius: 20px 0 0 20px;
+}
+
+.search-box .btn {
+  border-radius: 0 20px 20px 0;
+}
+
+/* CTA */
+.cta-section {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  padding: 70px 0;
+}
+
+
+/* SIDEBAR */
+.sidebar {
+  background: #f1f5ff;
+  min-height: calc(100vh - 56px);
+}
+.row a {
+  text-decoration: none;
+  color: inherit;
+
+}
+
+.sidebar .nav-item {
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+
+.sidebar .nav-item.active,
+.sidebar .nav-item:hover {
+  background: #e0e7ff;
+  color: #4338ca;
+  
+}
+
+.sidebar i {
+  margin-right: 8px;
+}
+
+.logout {
+  margin-top: 40px;
+  color: red;
+  cursor: pointer;
+}
+
+
+
+/* FOOTER */
+.footer {
+  background: linear-gradient(180deg, #0f172a, #020617);
+  padding: 60px 0 30px;
+  color: #e5e7eb; /* base readable text */
+}
+
+/* Footer headings */
+.footer h5,
+.footer h6 {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+/* Footer paragraph text (fix dim issue) */
+.footer p {
+  color: #cbd5f5; /* brighter than text-muted */
+  margin-bottom: 0;
+}
+
+/* Footer links */
+.footer a {
+  color: #cbd5f5;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* List spacing */
+.footer ul li {
+  margin-bottom: 8px;
+}
+
+/* Divider line (FIXED VISIBILITY) */
+.footer hr {
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 30px 0 20px;
+}
+
+/* Copyright text */
+.footer .text-muted {
+  color: #94a3b8 !important;
+  font-size: 13px;
+}

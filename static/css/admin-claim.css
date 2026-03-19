@@ -1,0 +1,137 @@
+body {
+    background: #f8f9fb;
+    font-size: 14px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 20px;
+    position: relative;
+}
+
+.logo {
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.sidebar .nav-link {
+    color: #374151;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.sidebar .nav-link i {
+    margin-right: 8px;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+/* Admin profile */
+.admin-profile {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-profile img {
+    border-radius: 50%;
+}
+
+.admin-profile p {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Content */
+.content {
+    padding: 30px;
+}
+
+/* Page Header */
+.page-header {
+    background: #ffffff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.card-header {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+/* Claim Image */
+.claim-img {
+    max-height: 220px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Proof Images */
+.proof-grid {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.proof-card {
+    width: 90px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.proof-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.proof-card:hover {
+    transform: scale(1.05);
+}
+
+.proof-card.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9fafb;
+    color: #9ca3af;
+}
+
+/* Decision emphasis */
+.decision-card {
+    border-left: 4px solid #22c55e;
+}
+
+/* Text polish */
+small.text-muted {
+    font-size: 12px;
+}
+
+p {
+    margin-bottom: 6px;
+}

@@ -1,0 +1,179 @@
+{% extends 'base-admin.html' %}
+{% load static %}
+
+{% block title %}Admin Lost Items{% endblock title %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/admin-lost-found.css' %}">
+{% endblock extra_css %}
+{% block content %}
+
+    <!-- Content -->
+    <main class="content flex-grow-1">
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <p>Total Items</p>
+                    <h3>1,247</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card warning">
+                    <p>Pending</p>
+                    <h3>89</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card success">
+                    <p>Verified</p>
+                    <h3>1,045</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card dark">
+                    <p>Closed</p>
+                    <h3>113</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lost Items Card -->
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Lost Items</h5>
+                <button class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus"></i> Add Item
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="card-body border-bottom">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Search items...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select">
+                            <option>All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select">
+                            <option>All Status</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-light w-100">
+                            <i class="bi bi-funnel"></i> Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Item ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Location Lost</th>
+                            <th>Images</th>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#LI-2024-001</td>
+                            <td>
+                                <strong>iPhone 14 Pro</strong>
+                                <div class="text-muted small">Space Black, 256GB</div>
+                            </td>
+                            <td>Electronics</td>
+                            <td>Central Park, NYC</td>
+                            <td>
+                                <div class="img-stack">
+                                    <span></span><span></span><small>+2</small>
+                                </div>
+                            </td>
+                            <td>
+                                <img src="https://i.pravatar.cc/30" class="avatar">
+                                John Smith
+                            </td>
+                            <td><span class="badge bg-warning-subtle text-warning">Pending</span></td>
+                            <td class="text-end">
+                                <a class="action view">View</a>
+                                <a class="action verify">Verify</a>
+                                <a class="action delete">Reject</a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>#LI-2024-002</td>
+                            <td>
+                                <strong>Wedding Ring</strong>
+                                <div class="text-muted small">Gold band with diamond</div>
+                            </td>
+                            <td>Jewelry</td>
+                            <td>Times Square, NYC</td>
+                            <td class="img-stack"><span></span><span></span></td>
+                            <td>
+                                <img src="https://i.pravatar.cc/31" class="avatar">
+                                Sarah Johnson
+                            </td>
+                            <td><span class="badge bg-success-subtle text-success">Verified</span></td>
+                            <td class="text-end">
+                                <a class="action view">View</a>
+                                <a class="action verify">Verify</a>
+                                <a class="action delete">Reject</a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>#LI-2024-003</td>
+                            <td>
+                                <strong>Blue Backpack</strong>
+                                <div class="text-muted small">Nike brand, laptop inside</div>
+                            </td>
+                            <td>Clothing</td>
+                            <td>Brooklyn Bridge</td>
+                            <td class="img-stack"><span></span><span></span></td>
+                            <td>
+                                <img src="https://i.pravatar.cc/32" class="avatar">
+                                Mike Davis
+                            </td>
+                            <td><span class="badge bg-secondary-subtle text-secondary">Closed</span></td>
+                            <td class="text-end">
+                                <a class="action view">View</a>
+                                <a class="action verify">Verify</a>
+                                <a class="action delete">Reject</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="card-footer d-flex justify-content-between">
+                <small>Showing 1 to 3 of 89 results</small>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item"><a class="page-link">Previous</a></li>
+                    <li class="page-item active"><a class="page-link">1</a></li>
+                    <li class="page-item"><a class="page-link">2</a></li>
+                    <li class="page-item"><a class="page-link">3</a></li>
+                    <li class="page-item"><a class="page-link">Next</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,41 @@
+body {
+  background: #f4f7fb;
+}
+
+.claim-container {
+  max-width: 600px;
+  margin: 60px auto;
+}
+
+.claim-box {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+}
+
+.item-card {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+  align-items: center;
+}
+
+.item-card img {
+  width: 70px;
+  border-radius: 8px;
+}
+
+.upload-box {
+  border: 2px dashed #d1d5db;
+  padding: 25px;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.upload-box input {
+  border: none;
+}

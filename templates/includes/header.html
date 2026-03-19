@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{% url 'landing_page' %}">
+        <i class="bi bi-search"></i> Khojne Sathi
+        </a>
+
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-3">
+            <li class="nav-item"><a class="nav-link active" href="{% url 'user_dashboard' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'landing_page' %}#how-it-works">How it works</a></li>
+        </ul>
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <a href="{% url 'report_found' %}">
+                <button class="btn btn-success btn-sm">+ Found</button>
+            </a>
+
+            <a href="{% url 'report_lost' %}">
+                <button class="btn btn-danger btn-sm"> − Lost</button>
+            </a>
+
+        <form class="d-flex align-items-center ms-2 search-box">
+    <div class="input-group input-group-sm">
+        
+        <!-- Text search -->
+        <input 
+        type="search" 
+        class="form-control" 
+        placeholder="Search items"
+        >
+
+        <!-- Image search button -->
+        <button class="btn btn-outline-secondary" type="button" title="Search by image">
+        <i class="bi bi-camera"></i>
+        </button>
+
+    </div>
+    </form>
+
+        <a href="{% url 'profile' %}"><i class="bi bi-person-circle fs-4 ms-2"></i></a>
+        </div>
+        </div>
+    </div>
+    </nav>
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}

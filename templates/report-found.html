@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+Report Found Item
+{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/report-found.css' %}">
+    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+{% endblock extra_css %}
+
+{% block sidebar %}
+{% endblock sidebar %}
+
+{% block content %}
+
+<!-- PAGE CONTENT -->
+<div class="container my-5">
+  <div class="page-wrapper">
+
+    <!-- TITLE -->
+    <div class="text-center mb-4">
+      <div class="alert-icon mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+
+      <h3 class="fw-bold">Report Found Item</h3>
+      <p class="text-muted mb-4">
+        Help us help you find the owner of this item by providing as much detail as possible.
+        The more information you provide, the better chance of recovery.
+      </p>
+
+      <hr class="section-divider">
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+      <form>
+
+        <!-- OBJECT TITLE -->
+        <div class="mb-3">
+          <div class="row">
+            <div class="col-8">
+              <label class="form-label">Object Title *</label>
+              <input type="text" name="title" class="form-control"
+                placeholder="e.g., iPhone 14 Pro, Black Leather Wallet, Blue Backpack">
+            </div>
+            <div class="col-4">
+              <label class="form-label ">Date Found *</label>
+              <input type="datetime-local" name="event_at" class="form-control">
+            </div>
+          </div>
+          
+
+          
+        </div>
+
+        <!-- CATEGORY & CITY -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Category *</label>
+            <select class="form-select" name="category">
+              <option selected disabled>Select a category</option>
+              {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">City *</label>
+            <select class="form-select" name="location_text">
+              <option selected disabled>Select a city</option>
+              <option>Kathmandu</option>
+              <option>Lalitpur</option>
+              <option>Bhaktapur</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- LOCATION -->
+        <div class="mb-3">
+          <label class="form-label">Pin Location on Map</label>
+          <div id="map" style="height: 300px; border-radius: 8px;" class="border"></div>
+          <small class="text-muted">Click on the map to set the exact location.</small>
+        </div>
+
+        <input type="hidden" name="latitude" id="lat">
+        <input type="hidden" name="longitude" id="lng">
+
+        <!-- UPLOAD -->
+        <div class="mb-3">
+          <label class="form-label">Upload Image</label>
+          <div class="upload-box text-center">
+            <i class="bi bi-cloud-upload fs-3"></i>
+            <p class="mt-2 mb-1">Drop your image here, or browse</p>
+            <small class="text-muted">Supports JPG, JPEG, PNG (Max 10MB)</small><br>
+            <input type="file" class="d-none" id="upload">
+            <label for="upload" class="btn btn-primary btn-sm mt-2">Choose File</label>
+          </div>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="mb-4">
+          <label class="form-label">Detailed Description *</label>
+          <textarea class="form-control" rows="4"
+          name="description"
+            placeholder="Please provide a detailed description including color, size, brand, distinctive features, and any other relevant details that would help identify the item..."></textarea>
+        </div>
+
+        <!-- SENSITIVE INFORMATION -->
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" name="is_sensitive" id="sensitiveInfo">
+          <label class="form-check-label" for="sensitiveInfo">This item contains sensitive information.</label>
+          <small>The item image will be blurred</small>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">All fields marked with * are required</small>
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-send"></i> Submit Report
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- TIPS -->
+    <div class="tips-box mt-5">
+      <div class="d-flex gap-2">
+        <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+        <div>
+          <h6 class="fw-bold mb-2">Tips for Better Results</h6>
+          <ul class="mb-0">
+            <li>Be as specific as possible with your description</li>
+            <li>Include unique identifying features or markings</li>
+            <li>Upload a clear, recent photo if available</li>
+            <li>Provide the exact location where you found the item</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock content %}
+
+
+
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('select').select2({
+    width: '100%',
+    minimumResultsForSearch: 0,   
+    dropdownAutoWidth: true,
+    closeOnSelect: true,
+    placeholder: 'Start typing...'
+  });
+});
+</script>
+<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+
+
+<script>
+  const map = new maplibregl.Map({
+    container: 'map',
+    // Using a public OSM-based vector style
+    style: 'https://tiles.openfreemap.org/styles/bright', 
+    center: [85.3240, 27.7172], // Kathmandu
+    zoom: 15.5,
+    pitch: 45,    // Tilts the map for 3D view
+    bearing: -17, // Rotates the map slightly
+    antialias: true
+  });
+
+  // Add a marker that we can move
+  let marker = new maplibregl.Marker({ draggable: true })
+    .setLngLat([85.3240, 27.7172])
+    .addTo(map);
+
+  // Update hidden inputs when marker is dragged
+  function onDragEnd() {
+    const lngLat = marker.getLngLat();
+    document.getElementById('lat').value = lngLat.lat.toFixed(6);
+    document.getElementById('lng').value = lngLat.lng.toFixed(6);
+  }
+  marker.on('dragend', onDragEnd);
+
+  // Also update position on map click
+  map.on('click', (e) => {
+    marker.setLngLat(e.lngLat);
+    document.getElementById('lat').value = e.lngLat.lat.toFixed(6);
+    document.getElementById('lng').value = e.lngLat.lng.toFixed(6);
+  });
+
+  // Add 3D Building Layer after map loads
+  map.on('load', () => {
+    map.addLayer({
+      'id': '3d-buildings',
+      'source': 'openmaptiles', // Standard OSM source name in this style
+      'source-layer': 'building',
+      'type': 'fill-extrusion',
+      'minzoom': 15,
+      'paint': {
+        'fill-extrusion-color': '#aaa',
+        'fill-extrusion-height': ['get', 'render_height'],
+        'fill-extrusion-base': ['get', 'render_min_height'],
+        'fill-extrusion-opacity': 0.6
+      }
+    });
+  });
+</script>
+
+
+{% endblock extra_js %}

@@ -1,0 +1,118 @@
+{% extends "base-admin.html" %}
+{% block title %}
+Admin Dashboard
+{% endblock title %}
+
+{% block extra_css %}
+{% endblock extra_css %}
+
+{% block content %}
+  
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- HEADER -->
+    <div class="top-bar">
+      <div>
+        <h4>Dashboard Overview</h4>
+        <p>Welcome back, monitor your platform activity</p>
+      </div>
+      <div class="top-actions">
+        <input type="text" class="form-control" placeholder="Search...">
+        <i class="bi bi-bell"></i>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <span class="icon red"><i class="bi bi-box"></i></span>
+          <h3>1,247</h3>
+          <p>Total Lost Items</p>
+          <small class="up">▲ 12% from last month</small>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <span class="icon blue"><i class="bi bi-bag-check"></i></span>
+          <h3>892</h3>
+          <p>Total Found Items</p>
+          <small class="up">▲ 8% from last month</small>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <span class="icon green"><i class="bi bi-check-circle"></i></span>
+          <h3>654</h3>
+          <p>Items Returned</p>
+          <small class="up">▲ 15% from last month</small>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <span class="icon purple"><i class="bi bi-people"></i></span>
+          <h3>3,482</h3>
+          <p>Active Users</p>
+          <small class="up">▲ 23% from last month</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-8">
+        <div class="card-box">
+          <h6>Lost Items Over Time</h6>
+          <p class="text-muted">Monthly trend analysis</p>
+          <div class="chart-placeholder">Line Chart</div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card-box">
+          <h6>Resolution Rate</h6>
+          <p class="text-muted">Lost vs Found status</p>
+          <div class="chart-placeholder">Pie Chart</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAR -->
+    <div class="card-box mb-4">
+      <h6>Found Items by Category</h6>
+      <p class="text-muted">Distribution across categories</p>
+      <div class="chart-placeholder">Bar Chart</div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="card-box mb-4">
+      <h6>Quick Actions</h6>
+      <div class="row g-3 mt-2">
+        <div class="col-md-3"><div class="action-card">Verify Item</div></div>
+        <div class="col-md-3"><div class="action-card">Approve User</div></div>
+        <div class="col-md-3"><div class="action-card">View Reports</div></div>
+        <div class="col-md-3"><div class="action-card">Send Notification</div></div>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="card-box">
+      <div class="d-flex justify-content-between">
+        <h6>Recent Activity</h6>
+        <a href="#">View All</a>
+      </div>
+
+      <ul class="activity-list mt-3">
+        <li>📦 New found item reported – 2 minutes ago</li>
+        <li>✅ Item successfully returned – 15 minutes ago</li>
+        <li>👤 New user registered – 1 hour ago</li>
+      </ul>
+    </div>
+
+  </main>
+
+{% endblock content %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/my-found-items.css' %}">
+{% endblock extra_css %}
+{% block content %}
+
+<!-- LAYOUT -->
+<div class="container-fluid">
+  <div class="row">
+
+
+    <!-- MAIN CONTENT -->
+    <main class="col-md-10 p-4">
+
+      <!-- HEADER -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 class="fw-bold mb-1">My Items</h4>
+          <p class="text-muted mb-0">Manage your lost and found postings</p>
+        </div>
+
+        <button class="btn btn-primary">
+         <a href="report-found.html"> <i class="bi bi-plus"></i> New Post </a>
+        </button>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs mb-3">
+        <button class="tab" onclick="location.href='my-items.html'">
+          My Lost Posts <span>8</span>
+        </button>
+        <button class="tab active">
+          My Found Posts <span>5</span>
+        </button>
+      </div>
+
+      <!-- ACTION BAR -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex gap-2">
+          <button class="btn btn-light btn-sm">
+            <i class="bi bi-funnel"></i> Filter
+          </button>
+          <button class="btn btn-light btn-sm">
+            <i class="bi bi-sort-down"></i> Sort by Date
+          </button>
+        </div>
+
+        <div class="view-toggle">
+          <button class="btn btn-primary btn-sm">
+            <i class="bi bi-grid"></i>
+          </button>
+          <button class="btn btn-light btn-sm">
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ITEMS GRID -->
+      <div class="row g-4">
+
+        <!-- CARD -->
+        <div class="col-md-4">
+          <div class="item-card">
+            <img src="images/items/phone.jpg">
+            <div class="item-body">
+              <div class="d-flex justify-content-between">
+                <h6>iPhone 14 Pro</h6>
+                <span class="badge published">Published</span>
+              </div>
+
+              <p class="small text-muted mb-2">
+                <i class="bi bi-calendar"></i> Posted on Nov 25, 2024
+              </p>
+
+              <div class="item-actions">
+                <button class="btn btn-light btn-sm">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button class="btn btn-light btn-sm text-danger">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+                <button class="btn btn-primary btn-sm">
+                  <i class="bi bi-eye"></i> View
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="item-card">
+            <img src="images/items/keys.jpg">
+            <div class="item-body">
+              <div class="d-flex justify-content-between">
+                <h6>Car Keys (BMW)</h6>
+                <span class="badge matched">Matched</span>
+              </div>
+
+              <p class="small text-muted mb-2">
+                <i class="bi bi-calendar"></i> Posted on Nov 18, 2024
+              </p>
+
+              <div class="item-actions">
+                <button class="btn btn-light btn-sm"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-light btn-sm text-danger"><i class="bi bi-trash"></i> Delete</button>
+                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> View</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PAGINATION -->
+       <div class="container mt-4">
+        <div class="product-slider">
+          <div class="page-box">1</div>
+          <div class="page-box">2</div>
+          <div class="page-box">3</div>
+          <div class="page-box">4</div>
+          <div class="page-box">5</div>
+          <div class="page-box">6</div>
+        </div>
+      </div>
+
+
+
+    </main>
+  </div>
+</div>
+
+
+{% endblock content %}
+{% comment %} </footer>
+<!-- ================= SCRIPTS (FIXED ORDER) ================= -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script> {% endcomment %}
+
+

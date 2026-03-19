@@ -1,0 +1,69 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f8fafc;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: #f1f5ff;
+  min-height: calc(100vh - 56px);
+}
+
+.sidebar .nav-item {
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sidebar .nav-item.active,
+.sidebar .nav-item:hover {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.sidebar i {
+  margin-right: 8px;
+}
+
+.logout {
+  margin-top: 40px;
+  color: red;
+  cursor: pointer;
+}
+
+/* WELCOME BOX */
+.welcome-box {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+/* ITEM CARD */
+.item-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.item-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+/* FOOTER */
+.footer {
+  background: #0f172a;
+  padding: 50px 0;
+}
+
+.footer a {
+  color: #94a3b8;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #fff;
+}
+

@@ -1,0 +1,27 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f8fafc;
+}
+
+
+/* WELCOME BOX */
+.welcome-box {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+/* ITEM CARD */
+.item-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.item-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+

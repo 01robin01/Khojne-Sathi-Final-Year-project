@@ -1,0 +1,85 @@
+/* body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f8fafc;
+}
+
+/* PAGE WIDTH */
+.page-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ALERT ICON */
+.alert-icon {
+  width: 56px;
+  height: 56px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  font-size: 22px;
+}
+
+/* DIVIDER */
+.section-divider {
+  max-width: 720px;
+  margin: 0 auto 30px auto;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* FORM CARD */
+.form-card {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* FORM SPACING */
+form .mb-3,
+form .mb-4 {
+  margin-bottom: 20px !important;
+}
+
+/* UPLOAD BOX */
+.upload-box {
+  max-width: 520px;
+  margin: 0 auto;
+  border: 2px dashed #c7d2fe;
+  border-radius: 10px;
+  padding: 24px;
+  background: #f8fafc;
+  color: #4f46e5;
+}
+
+/* TEXTAREA */
+textarea {
+  resize: none;
+}
+
+/* TIPS BOX */
+.tips-box {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #eef4ff;
+  border: 1px solid #c7d2fe;
+  padding: 20px 22px;
+  border-radius: 10px;
+}
+
+.tips-box ul {
+  padding-left: 18px;
+}
+
+.tips-box li {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
