@@ -72,84 +72,17 @@
 
     <div class="row g-4 align-items-stretch">
 
-      <!-- Card 1 : LOST -->
-      <div class="col-md-3 d-flex">
-        <div class="card item-card w-100">
+       {% for item in items %}
+      {% with img=item.images.first.image %}
+      {% include 'components/card.html' with image_url=img.url item_name=item.title status=item.item_type location=item.location_text view_url="#" claim_url="#" %}
+      {% endwith %}
+      {% endfor %}
 
-          <div class="item-image-wrapper">
-            <img src="/media/iphone-14.jpg" alt="iPhone 14 Pro">
-          </div>
+           {% include 'components/card.html' with image_url="/media/images/brown leather wallet.jpg" item_name="Brown Leather Wallet" status="Found" location="Thamel, Kathmandu" view_url="#" claim_url="#" %}
 
-          <div class="card-body text-center">
-            <span class="badge bg-danger mb-2">Lost</span>
-            <h6>iPhone 14 Pro</h6>
-            <p class="text-muted small">Ratna Park, Kathmandu</p>
-            <div class="d-flex gap-2 mt-auto">
-              <button class="btn btn-outline-primary btn-sm w-50">View</button>
-              <button class="btn btn-primary btn-sm w-50">Claim</button>
-            </div>
-          </div>
-        </div>
-      </div>
-         <!-- Card 2 : FOUND -->
-      <div class="col-md-3 d-flex">
-        <div class="card item-card w-100">
+       {% include 'components/card.html' with image_url="/media/images/car keys.jpg" item_name="Car Keys" status="Found" location="Durbar Marg" view_url="#" claim_url="#" %}
 
-          <div class="item-image-wrapper">
-            <img src="/media/wallet.webp" alt="Brown Leather Wallet">
-          </div>
-
-          <div class="card-body text-center">
-            <span class="badge bg-success mb-2">Found</span>
-            <h6>Brown Leather Wallet</h6>
-            <p class="text-muted small">Thamel, Kathmandu</p>
-                <div class="d-flex gap-2 mt-auto">
-              <button class="btn btn-outline-primary btn-sm w-50">View</button>
-              <button class="btn btn-primary btn-sm w-50">Claim</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-     <!-- Card 3 : FOUND -->
-      <div class="col-md-3 d-flex">
-        <div class="card item-card w-100">
-
-          <div class="item-image-wrapper">
-            <img src="/media/car-keys.jpg" alt="Car Keys">
-          </div>
-
-          <div class="card-body text-center">
-            <span class="badge bg-success mb-2">Found</span>
-            <h6>Car Keys</h6>
-            <p class="text-muted small">Durbar Marg</p>
-             <div class="d-flex gap-2 mt-auto">
-              <button class="btn btn-outline-primary btn-sm w-50">View</button>
-              <button class="btn btn-primary btn-sm w-50">Claim</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4 : LOST -->
-      <div class="col-md-3 d-flex">
-        <div class="card item-card w-100">
-
-          <div class="item-image-wrapper">
-            <img src="/media/black-bag.webp" alt="Black Backpack">
-          </div>
-
-          <div class="card-body text-center">
-            <span class="badge bg-danger mb-2">Lost</span>
-            <h6>Black Backpack</h6>
-            <p class="text-muted small">New Road</p>
-             <div class="d-flex gap-2 mt-auto">
-              <button class="btn btn-outline-primary btn-sm w-50">View</button>
-              <button class="btn btn-primary btn-sm w-50">Claim</button>
-            </div>
-          </div>
-        </div>
-      </div>
+         {% include 'components/card.html' with image_url="/media/images/black bag.jpg" item_name="Black Backpack" status="Lost" location="New Road" view_url="#" claim_url="#" %}
     </div>
   </div>
 </section>

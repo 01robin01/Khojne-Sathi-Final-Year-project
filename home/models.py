@@ -89,7 +89,7 @@ class Item(models.Model):
 class ItemImage(models.Model):
     item = models.ForeignKey(Item, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(upload_to="items/")
-    perceptual_hash = models.CharField(max_length=64, blank=True)
+    perceptual_hash = models.CharField(max_length=64, blank=True)    #Like Hashing but more visual where similar images result in similar hashes
     created_at = models.DateTimeField(auto_now_add=True)
 
 

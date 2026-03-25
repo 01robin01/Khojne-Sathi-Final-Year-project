@@ -108,8 +108,7 @@ body {
 
 /* FORCE SAME VISUAL IMAGE SIZE */
 .item-image-wrapper img {
-  width: 140px;                  
-  height: 140px;                  
+                   
   object-fit: contain;           
 }
 

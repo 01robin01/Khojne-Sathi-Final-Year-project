@@ -6,7 +6,7 @@ Report Lost Item
 {% endblock title %}
 
 {% block extra_css %}
- <link rel="stylesheet" href="{% static 'css/report-found.css' %}">
+ <link rel="stylesheet" href="{% static 'css/report-lost.css' %}">
     <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
 
 
@@ -38,8 +38,9 @@ Report Lost Item
 
     <!-- FORM CARD -->
     <div class="form-card">
-      <form>
+       <form method="post" enctype="multipart/form-data">
 
+        {% csrf_token %}
         <div class="mb-3">
           <label class="form-label">Object Title *</label>
           <input type="text" class="form-control"
@@ -82,7 +83,7 @@ Report Lost Item
             <i class="bi bi-cloud-upload fs-3"></i>
             <p class="mt-2 mb-1">Drop your image here, or browse</p>
             <small class="text-muted">Supports JPG, JPEG, PNG (Max 10MB)</small><br>
-            <input type="file" class="d-none" id="upload">
+             <input type="file" name="images" class="d-none" id="upload" multiple accept="image/*">
             <label for="upload" class="btn btn-primary btn-sm mt-2">Choose File</label>
           </div>
         </div>
@@ -113,7 +114,7 @@ Report Lost Item
             <li>Be as specific as possible with your description</li>
             <li>Include unique identifying features</li>
             <li>Upload a clear, recent photo if available</li>
-            <li>Provide the exact location where you last saw the item</li>
+             <li>Provide the exact location where you lost the item</li>
           </ul>
         </div>
       </div>

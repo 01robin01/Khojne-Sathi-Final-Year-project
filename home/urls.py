@@ -1,9 +1,10 @@
 from django.urls import path, include
 from django.shortcuts import render
+from .views import * 
 # from django.contrib import admin
 
-urlpatterns = [
-    path('',lambda request: render(request, 'index.html'), name='landing_page'),
+urlpatterns = [ 
+    path('',index, name='landing_page'), 
     path('admin-dashboard/',lambda request: render(request, 'admin-dashboard.html'), name='admin_dashboard'),
     path('dashboard/',lambda request: render(request, 'dashboard.html'), name='user_dashboard'),
     path('admin-lost/',lambda request: render(request, 'admin-lost.html'), name='admin_lost'),  
