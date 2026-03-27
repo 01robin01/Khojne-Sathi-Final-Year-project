@@ -82,3 +82,111 @@ textarea {
   margin-bottom: 6px;
   font-size: 14px;
 }
+
+
+.upload-box {
+  border: 2px dashed #d0d5dd;
+  padding: 20px;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.preview-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* TEXTAREA */
+textarea {
+  resize: none;
+}
+
+/* TIPS BOX */
+.tips-box {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #eef4ff;
+  border: 1px solid #c7d2fe;
+  padding: 20px 22px;
+  border-radius: 10px;
+}
+
+.tips-box ul {
+  padding-left: 18px;
+}
+
+.tips-box li {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+}
+
+.preview-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Image number badge */
+.preview-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 12px;
+}
+
+.preview-remove {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 10;               
+  background: rgba(220, 53, 69, 0.95);
+  color: #fff;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.preview-remove:hover {
+  background: rgb(220, 53, 69);
+}

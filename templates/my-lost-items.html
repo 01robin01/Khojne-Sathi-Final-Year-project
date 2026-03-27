@@ -16,7 +16,7 @@
         </div>
 
         <button class="btn btn-primary">
-          <a href="report-lost.html"><i class="bi bi-plus"></i> New Post</a>
+          <a href="{% url 'report_lost' %}"><i class="bi bi-plus"></i> New Post</a>
         </button>
       </div>
 
@@ -54,17 +54,17 @@
       <!-- ITEMS GRID -->
       <div class="row g-4">
 
-        <!-- CARD -->
+        {% for item in page_obj %}
         <div class="col-md-4">
           <div class="item-card">
-            <img src="images/items/wallet.jpg">
+             <img src="{{ item.images.first.image.url }}" alt="{{ item.title }}" class="item-image">
             <div class="item-body">
               <div class="d-flex justify-content-between">
-                <h6>Black Leather Wallet</h6>
+                <h6>{{ item.title }}</h6>
                 <span class="badge published">Published</span>
               </div>
               <p class="small text-muted mb-2">
-                <i class="bi bi-calendar"></i> Posted on Dec 5, 2024
+                <i class="bi bi-calendar"></i> Posted on {{ item.reported_at|date:"M d, Y" }} at {{ item.reported_at|time:"H:i" }}
               </p>
 
               <div class="item-actions">
@@ -82,59 +82,25 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="item-card">
-            <img src="images/items/laptop.jpg">
-            <div class="item-body">
-              <div class="d-flex justify-content-between">
-                <h6>MacBook Pro 15"</h6>
-                <span class="badge matched">Matched</span>
-              </div>
-              <p class="small text-muted mb-2">
-                <i class="bi bi-calendar"></i> Posted on Dec 3, 2024
-              </p>
+           {% endfor %}
 
-              <div class="item-actions">
-                <button class="btn btn-light btn-sm"><i class="bi bi-pencil"></i> Edit</button>
-                <button class="btn btn-light btn-sm text-danger"><i class="bi bi-trash"></i> Delete</button>
-                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> View</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="item-card">
-            <img src="images/items/backpack.jpg">
-            <div class="item-body">
-              <div class="d-flex justify-content-between">
-                <h6>Red Backpack</h6>
-                <span class="badge published">Published</span>
-              </div>
-              <p class="small text-muted mb-2">
-                <i class="bi bi-calendar"></i> Posted on Dec 1, 2024
-              </p>
-
-              <div class="item-actions">
-                <button class="btn btn-light btn-sm"><i class="bi bi-pencil"></i> Edit</button>
-                <button class="btn btn-light btn-sm text-danger"><i class="bi bi-trash"></i> Delete</button>
-                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> View</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    
       </div>
 
       <!-- PAGINATION -->
       <div class="d-flex justify-content-center mt-4">
         <nav>
-          <ul class="pagination">
-            <li class="page-item"><a class="page-link">‹</a></li>
-            <li class="page-item active"><a class="page-link">1</a></li>
-            <li class="page-item"><a class="page-link">2</a></li>
-            <li class="page-item"><a class="page-link">3</a></li>
-            <li class="page-item"><a class="page-link">›</a></li>
+          <ul class="pagination gap-2">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?page=1" class="page-link">&laquo; </a></li>
+            <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}" class="page-link"> < </a></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link">{{ page_obj.number }}</a></li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">> </a></li>
+                <li class="page-item"><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">&raquo;</a></li>
+            {% endif %}
           </ul>
         </nav>
       </div>

@@ -62,12 +62,7 @@ Report Lost Item
 
           <div class="col-md-6">
             <label class="form-label">City *</label>
-            <select class="form-select">
-              <option selected disabled>Select a city</option>
-              <option>Kathmandu</option>
-              <option>Lalitpur</option>
-              <option>Bhaktapur</option>
-            </select>
+             <input type="text" class="form-control" name="location_text" id="city_name" readonly>
           </div>
         </div>
 
@@ -82,7 +77,7 @@ Report Lost Item
           <div class="upload-box text-center">
             <i class="bi bi-cloud-upload fs-3"></i>
             <p class="mt-2 mb-1">Drop your image here, or browse</p>
-            <small class="text-muted">Supports JPG, JPEG, PNG (Max 10MB)</small><br>
+            <small class="text-muted">Supports JPG, JPEG, PNG (Max 2MB)</small><br>
              <input type="file" name="images" class="d-none" id="upload" multiple accept="image/*">
             <label for="upload" class="btn btn-primary btn-sm mt-2">Choose File</label>
           </div>
@@ -189,6 +184,127 @@ $(document).ready(function() {
       }
     });
   });
+
+
+
+const uploadInput = document.getElementById("upload");
+const previewGrid = document.getElementById("previewGrid");
+const imageCount = document.getElementById("imageCount");
+
+const MAX_SIZE_MB = 2;
+const MAX_WIDTH = 1600;
+const MAX_HEIGHT = 1600;
+
+let selectedFiles = [];
+
+uploadInput.addEventListener("change", async function () {
+  const newFiles = Array.from(this.files);
+
+  for (let file of newFiles) {
+    if (!file.type.startsWith("image/")) continue;
+
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      alert(`${file.name} exceeds 10MB and was skipped.`);
+      continue;
+    }
+
+    selectedFiles.push(file);
+  }
+
+  syncInputFiles();
+  renderPreviews();
+});
+
+function syncInputFiles() {
+  const dataTransfer = new DataTransfer();
+  selectedFiles.forEach(file => dataTransfer.items.add(file));
+  uploadInput.files = dataTransfer.files;
+}
+
+async function renderPreviews() {
+  previewGrid.innerHTML = "";
+
+  imageCount.textContent =
+    selectedFiles.length === 0
+      ? "No images selected"
+      : `${selectedFiles.length} image(s) selected`;
+
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const resizedBlob = await resizeImage(selectedFiles[i]);
+    createPreview(resizedBlob, i);
+  }
+}
+
+function createPreview(blob, index) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "preview-item";
+
+  const img = document.createElement("img");
+  img.src = URL.createObjectURL(blob);
+
+  img.addEventListener("click", () => {
+    window.open(img.src, "_blank");
+  });
+
+  const removeBtn = document.createElement("button");
+  removeBtn.className = "preview-remove";
+  removeBtn.innerHTML = "&times;";
+  removeBtn.title = "Remove image";
+
+  removeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    selectedFiles.splice(index, 1);
+    syncInputFiles();
+    e.target.parentElement.remove();
+    //renderPreviews();
+  });
+
+  wrapper.appendChild(img);
+  wrapper.appendChild(removeBtn);
+  previewGrid.appendChild(wrapper);
+}
+
+function resizeImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (e) => img.src = e.target.result;
+
+    img.onload = () => {
+      let { width, height } = img;
+
+      if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+        const ratio = Math.min(
+          MAX_WIDTH / width,
+          MAX_HEIGHT / height
+        );
+        width *= ratio;
+        height *= ratio;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => resolve(blob),
+        "image/jpeg",
+        0.9
+      );
+    };
+
+    reader.readAsDataURL(file);
+  });
+} 
+
+
+
+
+
+  
 </script>
 
 

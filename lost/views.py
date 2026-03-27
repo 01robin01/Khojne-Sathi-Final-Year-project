@@ -1,82 +1,19 @@
+from django.conf import settings
 from django.shortcuts import redirect, render
 
 
 # Create your views here.
-'''
-class Item(models.Model):
-    ITEM_TYPE_CHOICES = (
-        ("lost", "Lost"),
-        ("found", "Found"),
-    )
 
-    STATUS_CHOICES = (
-        ("active", "Active"),
-        ("matched", "Matched"),
-        ("resolved", "Resolved"),
-        ("expired", "Expired"),
-        ("withdrawn", "Withdrawn"),
-    )
-
-    item_type = models.CharField(max_length=10, choices=ITEM_TYPE_CHOICES)
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
-
-    reported_by = models.ForeignKey(
-        User, related_name="reported_items", on_delete=models.CASCADE
-    )
-
-    # Ownership semantics
-    claimed_by = models.ForeignKey(
-        User,
-        null=True,
-        blank=True,
-        related_name="claimed_items",
-        on_delete=models.SET_NULL,
-    )
-
-    # Location (structured)
-    location_text = models.CharField(max_length=255)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-
-    # Time semantics
-    event_at = models.DateTimeField(help_text="When item was lost or found")
-    reported_at = models.DateTimeField(default=timezone.now)
-
-    is_sensitive = models.BooleanField(default=False)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="active")
-
-    is_deleted = models.BooleanField(default=False)
-    objects = ItemManager()
-    admin_objects = models.Manager()  
-
-    def __str__(self):
-        return f"{self.item_type.upper()} - {self.title}"
-    
-    def delete(self,*args,**kwargs):
-        self.is_deleted=True
-        self.save()
-
-    def restore(self,*args,**kwargs):
-        self.is_deleted=False
-        self.save()
-
-
-# --------------------
-# ITEM IMAGES
-# --------------------
-class ItemImage(models.Model):
-    item = models.ForeignKey(Item, related_name="images", on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="items/")
-    perceptual_hash = models.CharField(max_length=64, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-'''
 from home.models import Item, Category,ItemImage
 from PIL import Image
 import imagehash
 from django.contrib import messages
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from .utils import validate_image_size
+from django.core.paginator import Paginator
+
+
 
 def report_lost(request):
 
@@ -101,12 +38,73 @@ def report_lost(request):
             longitude=long,
             latitude=lat,
             is_sensitive=is_sensitive
+            
         )
 
         for image in images:
-            phash = imagehash.phash(Image.open(image))
             
-            ItemImage.objects.create(item=item, image=image, perceptual_hash=str(phash))
-            messages.success(request, 'Lost item reported successfully.')
+            if image.size > settings.MAX_IMAGE_SIZE_MB * 1024 * 1024:
+                messages.error(
+                    request,
+                    f"{image.name} exceeds 2MB limit."
+                     )
+                continue
+
+            try:
+                img = Image.open(image)
+                img = img.convert("RGB")  
+                
+                img.thumbnail(settings.MAX_RESOLUTION, Image.LANCZOS) # pyright: ignore[reportAttributeAccessIssue]
+                
+                img_io = BytesIO()
+                img.save(img_io, format='JPEG', quality=90)
+                img_io.seek(0)
+
+                django_image = InMemoryUploadedFile(
+                    img_io,
+                    None,
+                    image.name,
+                    'image/jpeg',
+                    img_io.getbuffer().nbytes,
+                    None
+                )
+
+
+                phash = imagehash.phash(
+                    Image.open(django_image),
+                    hash_size=16
+                )
+
+
+                ItemImage.objects.create(
+                    item=item,
+                    perceptual_hash=str(phash)
+                )
+                
+                
+            except Exception:
+                messages.error(
+                    request,
+                    f"{image.name} is not a valid image."
+                )
+
+        messages.success(
+            request,
+            'Lost item reported successfully.'
+        )
         return redirect('my_lost_items')
-    return render(request, 'report-lost.html')
+
+        return render(request, 'report-lost.html')
+    
+    def my_lost_items(request):
+        items = Item.objects.filter(
+        reported_by=request.user,
+        item_type='lost'
+        ).order_by('-reported_at')
+        paginator = Paginator(items, 3)  # Show 3 items per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {
+            'page_obj': page_obj
+        }
+        return render(request, 'my-lost-items.html', context) 
