@@ -13,6 +13,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from .utils import validate_image_size
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseForbidden
 
 
 @login_required
@@ -28,6 +30,10 @@ def report_lost(request):
         is_sensitive = request.POST.get('is_sensitive') == 'on'
         event_at = request.POST.get('event_at')
         images = request.FILES.getlist('images')
+        
+        if len(images) > 10:
+            messages.error(request, "You can only upload up to 10 images.")
+            return redirect('report_lost')
         item = Item.objects.create(
             item_type='lost',
             title=title,
@@ -128,6 +134,46 @@ def update_item(request, item_id):
         item.is_sensitive = bool(request.POST.get("is_sensitive", item.is_sensitive))
         item.save()
         
+        # Handle new image uploads
+        images = request.FILES.getlist('images')
+        
+        existing_images_count = item.images.count()
+        if existing_images_count + len(images) > 10:
+            messages.error(request, f"You can only have up to 10 images per item. You currently have {existing_images_count} images.")
+            return redirect("update_item", item_id=item.id)
+            
+        for image in images:
+            if image.size > settings.MAX_IMAGE_SIZE_MB * 1024 * 1024:
+                messages.error(
+                    request,
+                    f"{image.name} exceeds limit."
+                )
+                continue
+
+            try:
+                img = Image.open(image)
+                img = img.convert("RGB")
+                img.thumbnail(settings.MAX_RESOLUTION, Image.LANCZOS)
+                
+                img_io = BytesIO()
+                img.save(img_io, format='JPEG', quality=90)
+                img_io.seek(0)
+
+                django_image = InMemoryUploadedFile(
+                    img_io, None, image.name, 'image/jpeg',
+                    img_io.getbuffer().nbytes, None
+                )
+                
+                phash = imagehash.phash(Image.open(django_image), hash_size=16)
+                
+                ItemImage.objects.create(
+                    item=item,
+                    image=django_image,
+                    perceptual_hash=str(phash)
+                )
+            except Exception:
+                messages.error(request, f"{image.name} is not a valid image.")
+        
         messages.success(request, "Item updated successfully!")
         return redirect("my_lost_items")
 
@@ -151,6 +197,20 @@ def delete_item(request, item_id):
         "item": item
     }
     return render(request, "confirm-delete.html", context)
+
+@login_required
+def delete_item_image(request, image_id):
+    if request.method == 'POST':
+        image = get_object_or_404(ItemImage, id=image_id)
+        if image.item.reported_by != request.user:
+            return HttpResponseForbidden("You are not allowed to delete this image.")
+        
+        item_id = image.item.id
+        image.delete()
+        messages.success(request, "Image deleted successfully!")
+        return redirect("update_item", item_id=item_id)
+    return redirect("my_lost_items")
+
 
 @login_required
 def lost_item_detail(request, item_id):

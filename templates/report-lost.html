@@ -101,7 +101,23 @@ Report Lost Item
         <input type="hidden" name="longitude" id="lng" value="{{ item.longitude|default:'' }}">
 
         <div class="mb-3">
-          <label class="form-label">Upload Images</label>
+          <label class="form-label">Item Images</label>
+
+          {% if item and item.images.all %}
+          <div class="existing-images mb-3">
+              <label class="form-label text-muted small">Current Images</label>
+              <div class="d-flex flex-wrap gap-2">
+                  {% for img in item.images.all %}
+                  <div class="position-relative" style="width: 100px; height: 100px;">
+                      <img src="{{ img.image.url }}" class="img-thumbnail w-100 h-100 object-fit-cover" alt="Item Image">
+                      <button type="submit" formaction="{% url 'delete_item_image' img.id %}" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1" style="line-height: 1; width: 24px; height: 24px;" title="Delete image" formnovalidate>
+                          <i class="bi bi-x"></i>
+                      </button>
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+          {% endif %}
 
           <div class="upload-box text-center">
             <i class="bi bi-cloud-upload fs-3"></i>
@@ -264,6 +280,12 @@ let selectedFiles = [];
 
 uploadInput.addEventListener("change", async function () {
   const newFiles = Array.from(this.files);
+  
+  const existingImagesCount = document.querySelectorAll('.existing-images .position-relative').length;
+  if (selectedFiles.length + newFiles.length + existingImagesCount > 10) {
+    alert("You can only have a maximum of 10 images per item.");
+    return;
+  }
 
   for (let file of newFiles) {
     if (!file.type.startsWith("image/")) continue;

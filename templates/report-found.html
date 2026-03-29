@@ -42,20 +42,20 @@ Report Found Item
 
     <!-- FORM CARD -->
     <div class="form-card">
-      <form>
+      <form method="post">
 
         <!-- OBJECT TITLE -->
         <div class="mb-3">
-       <div class="row">
+          <div class="row">
             <div class="col-8">
               <label class="form-label">Object Title *</label>
               <input type="text" name="title" class="form-control"
-                 placeholder="e.g., iPhone 14 Pro, Black Leather Wallet, Blue Backpack"
+                placeholder="e.g., iPhone 14 Pro, Black Leather Wallet, Blue Backpack"
                 value="{{ item.title|default:'' }}">
             </div>
             <div class="col-4">
               <label class="form-label ">Date Found *</label>
-             <input type="datetime-local" name="event_at" class="form-control" value="{{ item.event_at|date:'Y-m-d\TH:i'|default:'' }}">
+              <input type="datetime-local" name="event_at" class="form-control" value="{{ item.event_at|date:'Y-m-d\TH:i'|default:'' }}">
             </div>
           </div>
           
@@ -70,7 +70,7 @@ Report Found Item
             <select class="form-select" name="category">
               <option selected disabled>Select a category</option>
               {% for cat in categories %}
-           <option value="{{ cat.id }}"
+              <option value="{{ cat.id }}"
               {% if cat.id == item.category.id %}
               
               selected
@@ -82,7 +82,8 @@ Report Found Item
 
           <div class="col-md-6">
             <label class="form-label">City *</label>
-           <input type="text" class="form-control" name="location_text" id="city_name" readonly value="{{ item.location_text|default:'' }}">
+            <input type="text" class="form-control" name="location_text" id="city_name" readonly value="{{ item.location_text|default:'' }}">
+              
           </div>
         </div>
 
@@ -93,15 +94,32 @@ Report Found Item
           <small class="text-muted">Click on the map to set the exact location.</small>
         </div>
 
-       <input type="hidden" name="latitude" id="lat" value="{{ item.latitude|default:'' }}">
+        <input type="hidden" name="latitude" id="lat" value="{{ item.latitude|default:'' }}">
         <input type="hidden" name="longitude" id="lng" value="{{ item.longitude|default:'' }}">
 
         <!-- UPLOAD -->
         <div class="mb-3">
-          <label class="form-label">Upload Image</label>
+          <label class="form-label">Item Images</label>
+
+          {% if item and item.images.all %}
+          <div class="existing-images mb-3">
+              <label class="form-label text-muted small">Current Images</label>
+              <div class="d-flex flex-wrap gap-2">
+                  {% for img in item.images.all %}
+                  <div class="position-relative" style="width: 100px; height: 100px;">
+                      <img src="{{ img.image.url }}" class="img-thumbnail w-100 h-100 object-fit-cover" alt="Item Image">
+                      <button type="submit" formaction="{% url 'delete_found_item_image' img.id %}" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1" style="line-height: 1; width: 24px; height: 24px;" title="Delete image" formnovalidate>
+                          <i class="bi bi-x"></i>
+                      </button>
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+          {% endif %}
+
           <div class="upload-box text-center">
             <i class="bi bi-cloud-upload fs-3"></i>
-           <p class="mt-2 mb-1">Drop your images here, or browse</p>
+            <p class="mt-2 mb-1">Drop your images here, or browse</p>
             <small class="text-muted">
               JPG, PNG • Max 2MB each • Multiple allowed
             </small><br>
@@ -132,12 +150,12 @@ Report Found Item
           <label class="form-label">Detailed Description *</label>
           <textarea class="form-control" rows="4"
           name="description"
-         placeholder="Please provide a detailed description including color, size, brand, distinctive features, and any other relevant details that would help identify the item...">{{ item.description|default:'' }}</textarea>
+            placeholder="Please provide a detailed description including color, size, brand, distinctive features, and any other relevant details that would help identify the item...">{{ item.description|default:'' }}</textarea>
         </div>
 
         <!-- SENSITIVE INFORMATION -->
         <div class="mb-3 form-check">
-       <input type="checkbox" class="form-check-input" name="is_sensitive" id="sensitiveInfo" {{ item.is_sensitive|yesno:"checked," }}>
+          <input type="checkbox" class="form-check-input" name="is_sensitive" id="sensitiveInfo" {{ item.is_sensitive|yesno:"checked," }}>
           <label class="form-check-label" for="sensitiveInfo">This item contains sensitive information.</label>
           <small>The item image will be blurred</small>
         </div>
@@ -145,8 +163,8 @@ Report Found Item
         <!-- FOOTER -->
         <div class="d-flex justify-content-between align-items-center">
           <small class="text-muted">All fields marked with * are required</small>
-       <button class="btn btn-primary" type="submit">ubmit Report
-            <i class="bi bi-send"></i> 
+          <button class="btn btn-primary" type="submit">ubmit Report
+            <i class="bi bi-send"></i> S
           </button>
         </div>
 
@@ -196,7 +214,9 @@ $(document).ready(function() {
 
 
 <script>
-  function initializeMap(lng, lat) {
+
+
+function initializeMap(lng, lat) {
   const map = new maplibregl.Map({
     container: 'map',
     // Using a public OSM-based vector style
@@ -207,8 +227,7 @@ $(document).ready(function() {
     bearing: 0, // Rotates the map slightly
     antialias: true
   });
-
-   map.addControl(
+    map.addControl(
     new maplibregl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true
@@ -234,13 +253,14 @@ $(document).ready(function() {
 
     
     getCityName(lng, lat);
+    
   }
   marker.on('dragend', onDragEnd);
 
   // Also update position on map click
   map.on('click', (e) => {
     marker.setLngLat(e.lngLat);
-     lat= e.lngLat.lat.toFixed(6);
+    lat= e.lngLat.lat.toFixed(6);
     lng = e.lngLat.lng.toFixed(6);
     document.getElementById('lat').value = lat;
     document.getElementById('lng').value = lng;
@@ -266,9 +286,7 @@ $(document).ready(function() {
       }
     });
   });
-
-
-  }
+}
 navigator.geolocation.getCurrentPosition(
     (position) => {
         userLng = position.coords.longitude;
@@ -297,6 +315,12 @@ let selectedFiles = [];
 
 uploadInput.addEventListener("change", async function () {
   const newFiles = Array.from(this.files);
+  
+  const existingImagesCount = document.querySelectorAll('.existing-images .position-relative').length;
+  if (selectedFiles.length + newFiles.length + existingImagesCount > 10) {
+    alert("You can only have a maximum of 10 images per item.");
+    return;
+  }
 
   for (let file of newFiles) {
     if (!file.type.startsWith("image/")) continue;
@@ -414,6 +438,8 @@ async function getCityName(lng, lat) {
     }
 }
 
+
+  
 </script>
 
 
