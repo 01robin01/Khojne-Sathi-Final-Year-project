@@ -3,6 +3,34 @@
 {% load static %}
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/my-lost-items.css' %}">
+    <style>
+    /* List View Styles */
+    #itemsGridContainer.list-view .item-col {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+    #itemsGridContainer.list-view .item-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    #itemsGridContainer.list-view .item-image {
+        width: 200px;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px 0 0 8px;
+    }
+    #itemsGridContainer.list-view .item-body {
+        flex: 1;
+        padding: 1.5rem;
+    }
+    #itemsGridContainer.list-view .item-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+  </style>
 {% endblock extra_css %}
 {% block content %}
 
@@ -32,29 +60,40 @@
       <!-- ACTION BAR -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="d-flex gap-2">
-          <button class="btn btn-light btn-sm">
-            <i class="bi bi-funnel"></i> Filter
-          </button>
-          <button class="btn btn-light btn-sm">
+  <div class="dropdown">
+            <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="filterDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+              <i class="bi bi-funnel"></i> Filter
+            </button>
+            <ul class="dropdown-menu p-3 shadow" aria-labelledby="filterDropdownBtn" style="min-width: 250px;">
+              <li><label class="form-label small fw-bold">Filter by Title</label></li>
+              <li>
+                  <input type="text" class="form-control form-control-sm mb-3" id="filterTitleInput" placeholder="Search title...">
+              </li>
+              <li>
+                  <button class="btn btn-primary btn-sm w-100" id="applyFilterBtn">Apply Filter</button>
+              </li>
+            </ul>
+          </div>
+          <button class="btn btn-light btn-sm" id="sortDateBtn">
             <i class="bi bi-sort-down"></i> Sort by Date
           </button>
         </div>
 
         <div class="view-toggle">
-          <button class="btn btn-primary btn-sm">
+          <button class="btn btn-primary btn-sm" id="gridToggleBtn">
             <i class="bi bi-grid"></i>
           </button>
-          <button class="btn btn-light btn-sm">
+         <button class="btn btn-light btn-sm" id="listToggleBtn">
             <i class="bi bi-list"></i>
           </button>
         </div>
       </div>
 
       <!-- ITEMS GRID -->
-      <div class="row g-4">
+    <div class="row g-4" id="itemsGridContainer">
 
         {% for item in page_obj %}
-        <div class="col-md-4">
+      <div class="col-md-4 item-col">
           <div class="item-card">
             <img src="{{ item.images.first.image.url }}" alt="{{ item.title }}" class="item-image" style="width: 100%; height: 200px; object-fit: cover;">
             <div class="item-body p-3">
@@ -89,22 +128,169 @@
       </div>
 
       <!-- PAGINATION -->
-      <div class="d-flex justify-content-center mt-4">
-        <nav>
-          <ul class="pagination gap-2">
-            {% if page_obj.has_previous %}
-            <li class="page-item"><a href="?page=1" class="page-link">&laquo; </a></li>
-            <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}" class="page-link"> < </a></li>
-            {% endif %}
-            <li class="page-item active"><a class="page-link">{{ page_obj.number }}</a></li>
-            
-            {% if page_obj.has_next %}
-                <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">> </a></li>
-                <li class="page-item"><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">&raquo;</a></li>
-            {% endif %}
-          </ul>
-        </nav>
+       <div class="d-flex justify-content-center mt-4" id="paginationContainer">
+        <!-- JS Pagination -->
       </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const gridContainer = document.getElementById('itemsGridContainer');
+    const cols = Array.from(gridContainer.querySelectorAll('.item-col'));
+    
+    // Scrape data
+    const itemsData = cols.map(col => {
+      const dateTextNode = col.querySelector('.bi-calendar')?.parentNode;
+      const dateText = dateTextNode ? dateTextNode.innerText : '';
+      let dateValue = new Date(); // fallback
+      const dateMatch = dateText.match(/Posted on (.+)/);
+      if (dateMatch) {
+         // rough parse e.g. "Mar 15, 2026" or "Mar 15, 2026 at 14:30"
+         dateValue = new Date(dateMatch[1].replace('at', ''));
+      }
+      return {
+        element: col,
+        title: col.querySelector('h6').innerText.toLowerCase(),
+        date: dateValue,
+      };
+    });
+
+    let sortAsc = false; // default newest first
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 6;
+    let isListView = false;
+
+    const filterTitleInput = document.getElementById('filterTitleInput');
+    const applyFilterBtn = document.getElementById('applyFilterBtn');
+    const sortDateBtn = document.getElementById('sortDateBtn');
+    const gridToggleBtn = document.getElementById('gridToggleBtn');
+    const listToggleBtn = document.getElementById('listToggleBtn');
+    const paginationContainer = document.getElementById('paginationContainer');
+
+    function render() {
+      // 1. Filter
+      const filterText = filterTitleInput.value.toLowerCase();
+      let filtered = itemsData.filter(item => item.title.includes(filterText));
+
+      // 2. Sort
+      filtered.sort((a, b) => {
+        return sortAsc ? (a.date - b.date) : (b.date - a.date);
+      });
+
+      // 3. Paginate
+      const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      // Handle the case where no items match but totalPages is 1
+      if (filtered.length === 0) currentPage = 1;
+
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const pageItems = filtered.slice(startIndex, endIndex);
+
+      // Render items
+      gridContainer.innerHTML = '';
+      if (pageItems.length === 0) {
+        if (itemsData.length === 0) {
+            gridContainer.innerHTML = '<div class="col-12 text-center py-5"><p class="text-muted">You haven\\'t posted any found items yet.</p></div>';
+        } else {
+            gridContainer.innerHTML = '<div class="col-12 text-center py-5"><p class="text-muted">No items match your filter.</p></div>';
+        }
+      } else {
+        pageItems.forEach(item => {
+          gridContainer.appendChild(item.element);
+        });
+      }
+
+      // 4. View mode
+      if (isListView) {
+        gridContainer.classList.add('list-view');
+        gridToggleBtn.classList.replace('btn-primary', 'btn-light');
+        listToggleBtn.classList.replace('btn-light', 'btn-primary');
+      } else {
+        gridContainer.classList.remove('list-view');
+        gridToggleBtn.classList.replace('btn-light', 'btn-primary');
+        listToggleBtn.classList.replace('btn-primary', 'btn-light');
+      }
+
+      // Render Pagination
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+      }
+
+      let html = '<nav><ul class="pagination gap-2">';
+      // Prev
+      html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                 <a href="#" class="page-link" data-page="${currentPage - 1}">&laquo; Prev</a>
+               </li>`;
+               
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<li class="page-item ${currentPage === i ? 'active' : ''}">
+                   <a href="#" class="page-link" data-page="${i}">${i}</a>
+                 </li>`;
+      }
+
+      // Next
+      html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                 <a href="#" class="page-link" data-page="${currentPage + 1}">Next &raquo;</a>
+               </li>`;
+      
+      html += '</ul></nav>';
+      paginationContainer.innerHTML = html;
+
+      // Add events
+      const links = paginationContainer.querySelectorAll('a.page-link');
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const page = parseInt(e.currentTarget.getAttribute('data-page'));
+          if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            render();
+            gridContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    }
+
+    // Events
+    if(applyFilterBtn) {
+        applyFilterBtn.addEventListener('click', () => {
+          currentPage = 1;
+          render();
+        });
+    }
+
+    if(sortDateBtn) {
+        sortDateBtn.addEventListener('click', () => {
+          sortAsc = !sortAsc;
+          sortDateBtn.innerHTML = sortAsc 
+            ? '<i class="bi bi-sort-up"></i> Oldest First'
+            : '<i class="bi bi-sort-down"></i> Sort by Date';
+          render();
+        });
+    }
+
+    if(gridToggleBtn) {
+        gridToggleBtn.addEventListener('click', () => {
+          isListView = false;
+          render();
+        });
+    }
+
+    if(listToggleBtn) {
+        listToggleBtn.addEventListener('click', () => {
+          isListView = true;
+          render();
+        });
+    }
+
+    // Initial render
+    render();
+  });
+</script>
 
 
 {% endblock content %}

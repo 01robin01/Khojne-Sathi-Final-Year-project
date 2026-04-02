@@ -1,66 +1,90 @@
 {% extends "base.html" %}
 {% block title %}Claim Item{% endblock %}
 {% block content %}
-<body>
+ 
 
 <div class="container my-5">
   <div class="page-wrapper">
 
   <h3 class="text-center fw-bold mb-1">Claim This Item</h3>
-  <p class="text-center text-muted mb-4">Submit proof to claim ownership of the item</p>
+    <p class="text-center text-muted mb-4">
+      Submit proof to claim ownership of the item
+    </p>
 
-  <div class="claim-box">
+    <div class="claim-box">
+ <div class="item-card mb-4 d-flex gap-3 align-items-center border p-3 rounded bg-light">
+        {% if item.images.first %}
+            {% if item.images.first.is_private %}
+                <img src="data:image/jpeg;base64,{{ item.images.first.base64_image }}" alt="{{ item.title }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+            {% else %}
+                <img src="{{ item.images.first.image.url }}" alt="{{ item.title }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+            {% endif %}
+        {% else %}
+            <div class="bg-white rounded d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border: 1px dashed #ccc;">
+                <i class="bi bi-image text-muted fs-3"></i>
+            </div>
+        {% endif %}
+        <div>
+          <h6 class="fw-bold mb-1">{{ item.title }}</h6>
+          <small class="text-muted"><i class="bi bi-tag me-1"></i>{{ item.category.name }}</small><br>
+          <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ item.location_text }}</small><br>
+          <small class="text-muted">
+            Posted as:
+            <span class="badge {% if item.item_type == 'found' %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} text-uppercase">
+              {{ item.item_type }}
+            </span>
+          </small>
+        </div>
+    
 
-    <div class="item-card mb-4">
-      <img src="https://via.placeholder.com/80" alt="image">
-      <div>
-        <h6 class="fw-bold mb-1">Brown Leather Wallet</h6>
-        <small>Category: Personal Items</small><br>
-        <small>City: Kathmandu</small><br>
-        <small>Posted as: <span class="badge bg-success">Found</span></small>
-      </div>
-    </div>
+     <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <form>
+        <div class="mb-3">
+          <label>Full Name *</label>
+          <input type="text" name="full_name" class="form-control" value="{{ request.user.first_name }}" required>
+        </div>
+
       <div class="mb-3">
-        <label>Full Name *</label>
-        <input type="text" class="form-control" placeholder="Enter your full name">
-      </div>
+          <label>Email Address *</label>
+          <input type="email" name="email" class="form-control" value="{{ request.user.email }}" required>
+        </div>
 
       <div class="mb-3">
-        <label>Email Address *</label>
-        <input type="email" class="form-control" value="user@example.com">
-      </div>
+          <label>Contact Number *</label>
+          <input type="text" name="contact" class="form-control" value="{{ request.user.phone }}" required>
+        </div>
+          <div class="mb-3">
+          <label>Proof of Ownership *</label>
+          <textarea name="proof" class="form-control" rows="3" required></textarea>
+        </div>
 
-      <div class="mb-3">
-        <label>Contact Number *</label>
-        <input type="text" class="form-control" placeholder="Enter your contact number">
-      </div>
-
-      <div class="mb-3">
-        <label>Proof of Ownership *</label>
-        <textarea class="form-control" rows="3" placeholder="Describe any unique details, serial number, IMEI, scratches, marks, purchase details, etc."></textarea>
-      </div>
-
+        
      <div class="mb-3">
           <label class="form-label">Upload Image</label>
           <div class="upload-box text-center">
             <i class="bi bi-cloud-upload fs-3"></i>
             <p class="mt-2 mb-1">Drop your image here, or browse</p>
-            <small class="text-muted">Supports JPG, JPEG, PNG (Max 10MB)</small><br>
-            <input type="file" class="d-none" id="upload">
+         <small class="text-muted">Supports JPG, JPEG, PNG</small><br>
+
+            <input type="file" name="image" class="d-none" id="upload">
             <label for="upload" class="btn btn-primary btn-sm mt-2">Choose File</label>
           </div>
         </div>
+ 
+          <div class="text-end">
+          {% if item.item_type == 'lost' %}
+          <a href="{% url 'view_item' item.id %}" class="btn btn-light me-2">Cancel</a>
+          {% else %}
+          <a href="{% url 'view_found_item' item.id %}" class="btn btn-light me-2">Cancel</a>
+          {% endif %}
+          <button type="submit" class="btn btn-primary">Submit Claim</button>
+        </div>
+      </form>
 
-      <div class="text-end">
-        <button type="button" class="btn btn-light me-2">Cancel</button>
-        <button type="submit" class="btn btn-primary">Submit Claim</button>
-      </div>
-    </form>
-
+    </div>
   </div>
 </div>
 
-</body>
+ 
 {% endblock content %}
