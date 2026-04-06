@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 
+@login_required
 def report_found(request):
 
     if request.method == 'POST':

@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 
 from .models import Item, ItemImage
-print("Signals loaded!")
+ 
 
 
 def send_match_email(user, items):
@@ -14,7 +14,7 @@ def send_match_email(user, items):
 
     links = []
     for item in items:
-        url = f"http://127.0.0.1:8000{reverse('item_detail', args=[item.id])}"
+        url = f"http://127.0.0.1:8000{reverse('item_details', args=[item.id])}"
         links.append(f"{item.title}: {url}")
 
     message = "We found possible matches for your item:\n\n"
@@ -45,6 +45,8 @@ def calculate_distance(lat1, lon1, lat2, lon2):
         return None
     
     R = 6371  # Earth radius in km
+    lat1 = Decimal(lat1)
+    lon1 = Decimal(lon1)
     d_lat = math.radians(lat2 - lat1)
     d_lon = math.radians(lon2 - lon1)
     a = (math.sin(d_lat / 2)**2 + 
@@ -63,8 +65,8 @@ def find_intelligent_matches(current_item):
     Finds matches based on:
     1. Opposite item type (Lost vs Found)
     2. Exact Category
-    3. Location Proximity (within 10km)
-    4. Image Similarity
+    3. Location Proximity (within 10km) (Haversine Formula)
+    4. Image Similarity (hamming distance of perceptual hashes)
     """
     # 1. Start with basic filters: Must be opposite type, same category, and active
     opposite_type = "found" if current_item.item_type == "lost" else "lost"
@@ -88,7 +90,7 @@ def find_intelligent_matches(current_item):
                 candidate.latitude, candidate.longitude
             )
             # Only consider it a match if within 10km (adjust as needed)
-            if dist and dist <= 10:
+            if dist and dist <= getattr(settings, 'LOCATION_THRESHOLD_KM', 10):
                 is_match = True
         
         # --- CRITERIA B: Image Hashing (If not already matched by location) ---
@@ -112,29 +114,13 @@ def find_intelligent_matches(current_item):
 
     return Item.objects.filter(id__in=matched_ids)[:10]
 
-@receiver(post_save, sender=ItemImage)
-def match_on_image_upload(sender, instance, created, **kwargs):
-    if not created:
-        return
-
-    item = instance.item
-    
-    # Logic: If this is the first image uploaded, let's run the match.
-    # We check for count == 1 because the image being saved is already in the DB.
-    if item.images.count() == 1:
-        matches = find_intelligent_matches(item)
-        if matches.exists():
-            send_match_email(item.reported_by, matches)
-            print(f"Intelligent match found {matches.count()} items for Item {item.id}")
+ 
 
 
 @receiver(post_save, sender=Item)
 def match_on_item_update(sender, instance, created, **kwargs):
-    if created:
-        return
-
-    # Only run match if item is active and has location data
-    if instance.status != "active":
+    
+    if not created:
         return
 
     matches = find_intelligent_matches(instance)

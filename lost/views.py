@@ -244,7 +244,7 @@ def lost_item_detail(request, item_id):
         "related_items": related_items
     }
     return render(request, "item-details.html", context)
-
+@login_required
 def claim_item(request, item_id):
     item = get_object_or_404(Item, id=item_id)
     if request.method == 'POST':

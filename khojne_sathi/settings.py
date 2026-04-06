@@ -163,19 +163,22 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 
 MAX_IMAGE_SIZE_MB = 2
 MAX_RESOLUTION = (1600, 1600)
-
+# Image matching thresholds in Hamming Distance
 IMAGE_HASH_THRESHOLD = 10
-
+# Location matching threshold in kilometers
+LOCATION_THRESHOLD_KM = 10
 
 LOGIN_URL='/account/login/'
 
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, prints emails to console
+if DEBUG: 
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, prints emails to console
+ 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_USER = "chhetrirobin234@gmail.com"
+EMAIL_HOST_PASSWORD = "slis oowm altd qdyt"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+ 
  
