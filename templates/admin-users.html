@@ -7,10 +7,7 @@
 {% endblock extra_css %}
 {% block content %}
 
-<div class="d-flex">
-
-   
-
+<div class="container-fluid d-flex">
     <!-- Main Content -->
     <main class="content flex-grow-1">
         <div class="card shadow-sm">
@@ -54,9 +51,9 @@
                             <td>12</td>
                             <td><span class="badge bg-success-subtle text-success">Active</span></td>
                             <td class="text-end">
-                                <a href="#" class="action view">View</a>
-                                <a href="#" class="action suspend">Suspend</a>
-                                <a href="#" class="action delete">Delete</a>
+                                <a href="{% url 'user_detail' 1 %}" class="action view">View</a>
+                                <a href="{% url 'suspend_user' 1 %}" class="action suspend">Suspend</a>
+                                <a href="{% url 'delete_user' 1 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                             </td>
                         </tr>
 
@@ -71,9 +68,9 @@
                             <td>8</td>
                             <td><span class="badge bg-danger-subtle text-danger">Suspended</span></td>
                             <td class="text-end">
-                                <a href="#" class="action view">View</a>
-                                <a href="#" class="action activate">Activate</a>
-                                <a href="#" class="action delete">Delete</a>
+                                <a href="{% url 'user_detail' 2 %}" class="action view">View</a>
+                                <a href="{% url 'suspend_user' 2 %}" class="action activate">Activate</a>
+                                <a href="{% url 'delete_user' 2 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                             </td>
                         </tr>
 
@@ -88,9 +85,9 @@
                             <td>15</td>
                             <td><span class="badge bg-success-subtle text-success">Active</span></td>
                             <td class="text-end">
-                                <a href="#" class="action view">View</a>
-                                <a href="#" class="action suspend">Suspend</a>
-                                <a href="#" class="action delete">Delete</a>
+                                <a href="{% url 'user_detail' 3 %}" class="action view">View</a>
+                                <a href="{% url 'suspend_user' 3 %}" class="action suspend">Suspend</a>
+                                <a href="{% url 'delete_user' 3 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                             </td>
                         </tr>
                     </tbody>

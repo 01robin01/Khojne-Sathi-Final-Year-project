@@ -104,9 +104,8 @@
                             </td>
                             <td><span class="badge bg-warning-subtle text-warning">Pending</span></td>
                             <td class="text-end">
-                                <a class="action view">View</a>
-                                <a class="action verify">Verify</a>
-                                <a class="action delete">Reject</a>
+                                <a href="{% url 'item_details' 1 %}" class="action view">View</a>
+                                <a href="{% url 'delete_item' 1 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
                             </td>
                         </tr>
 
@@ -125,9 +124,8 @@
                             </td>
                             <td><span class="badge bg-success-subtle text-success">Verified</span></td>
                             <td class="text-end">
-                                <a class="action view">View</a>
-                                <a class="action verify">Verify</a>
-                                <a class="action delete">Reject</a>
+                                <a href="{% url 'item_details' 2 %}" class="action view">View</a>
+                                <a href="{% url 'delete_item' 2 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
                             </td>
                         </tr>
 
@@ -146,9 +144,8 @@
                             </td>
                             <td><span class="badge bg-secondary-subtle text-secondary">Closed</span></td>
                             <td class="text-end">
-                                <a class="action view">View</a>
-                                <a class="action verify">Verify</a>
-                                <a class="action delete">Reject</a>
+                                <a href="{% url 'item_details' 3 %}" class="action view">View</a>
+                                <a href="{% url 'delete_item' 3 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
                             </td>
                         </tr>
                     </tbody>

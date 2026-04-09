@@ -66,3 +66,39 @@ def dashboard(request):
         'found_items': found_items
     }
     return render(request, 'dashboard.html',context)
+
+from accounts.models import CustomUser
+
+def delete_item(request, id):
+    item = Item.objects.filter(id=id).first()
+    if item:
+        item.delete()
+        messages.success(request, 'Item deleted successfully.')
+    else:
+        messages.error(request, 'Item not found.')
+    return redirect(request.META.get('HTTP_REFERER', 'admin_dashboard'))
+
+def delete_user(request, id):
+    user = CustomUser.objects.filter(id=id).first()
+    if user:
+        user.delete()
+        messages.success(request, 'User deleted successfully.')
+    else:
+        messages.error(request, 'User not found.')
+    return redirect(request.META.get('HTTP_REFERER', 'admin_users'))
+
+def suspend_user(request, id):
+    user = CustomUser.objects.filter(id=id).first()
+    if user:
+        user.is_active = not user.is_active
+        user.save()
+        status = "activated" if user.is_active else "suspended"
+        messages.success(request, f'User {status} successfully.')
+    else:
+        messages.error(request, 'User not found.')
+    return redirect(request.META.get('HTTP_REFERER', 'admin_users'))
+
+def user_detail(request, id):
+    user = CustomUser.objects.filter(id=id).first()
+    context = {'user_obj': user}
+    return render(request, 'admin-user-detail.html', context)

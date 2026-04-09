@@ -1,0 +1,71 @@
+{% extends 'base-admin.html' %}
+{% load static %}
+
+{% block title %}User Detail{% endblock title %}
+
+{% block content %}
+<main class="content flex-grow-1">
+    <div class="card shadow-sm m-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">User Profile</h5>
+            <a href="{% url 'admin_users' %}" class="btn btn-secondary btn-sm">Back</a>
+        </div>
+        <div class="card-body">
+            {% if user_obj %}
+            <div class="row">
+                <div class="col-md-4 text-center border-end">
+                    <img src="https://i.pravatar.cc/150?u={{ user_obj.id|default:'none' }}" class="rounded-circle mb-3 border bg-light" alt="Profile avatar" style="width:150px;height:150px;">
+                    <h4>{{ user_obj.first_name }} {{ user_obj.last_name }}</h4>
+                    <p class="text-muted">@{{ user_obj.username }}</p>
+                    {% if user_obj.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                </div>
+                <div class="col-md-8 pl-4">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th style="width:30%">Email:</th>
+                                <td>{{ user_obj.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone:</th>
+                                <td>{{ user_obj.phone|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Address:</th>
+                                <td>{{ user_obj.street_address|default:"" }} {% if user_obj.city %}{{ user_obj.city }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <th>Registered:</th>
+                                <td>{{ user_obj.date_joined|date:"M d, Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Reports:</th>
+                                <td>
+                                    {{ user_obj.item_set.count|default:"0" }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-4">
+                        {% if user_obj.is_active %}
+                            <a href="{% url 'suspend_user' user_obj.id %}" class="btn btn-warning">Suspend User</a>
+                        {% else %}
+                            <a href="{% url 'suspend_user' user_obj.id %}" class="btn btn-success">Activate User</a>
+                        {% endif %}
+                        <a href="{% url 'delete_user' user_obj.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to completely remove this user?');">Delete User</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                User not found (dummy ID provided). 
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock content %}
