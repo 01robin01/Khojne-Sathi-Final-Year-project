@@ -203,12 +203,13 @@ def update_item(request, item_id):
 @login_required
 def delete_item(request, item_id):
     item = Item.objects.get(id=item_id)
-    if not item.reported_by == request.user:
+    if not item.reported_by == request.user and not request.user.is_staff:
         return HttpResponseForbidden("You are not allowed to delete this item.")
     if request.method == 'POST':
         item.delete()
         messages.success(request, "Item deleted successfully!")
-        return redirect("my_lost_items")
+        nexturl = request.META.get('HTTP_REFERER', "my_lost_items")
+        return redirect(nexturl)
 
     context = {
         "item": item

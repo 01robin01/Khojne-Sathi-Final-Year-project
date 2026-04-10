@@ -1,8 +1,8 @@
 from django.db import models
 from accounts.models import CustomUser as User
 from django.utils import timezone
-from .managers import ItemManager
 from django.urls import reverse
+from .managers import ItemManager
 
 
 # --------------------
@@ -11,9 +11,8 @@ from django.urls import reverse
 class Category(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey( "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE)
-   
-   
-def __str__(self):
+
+    def __str__(self):
         if self.parent:
             return f"{self.parent} > {self.name}"
         return self.name
@@ -32,8 +31,6 @@ class Item(models.Model):
         ("active", "Active"),
         ("matched", "Matched"),
         ("resolved", "Resolved"),
-        ("expired", "Expired"),
-        ("withdrawn", "Withdrawn"),
     )
 
     item_type = models.CharField(max_length=10, choices=ITEM_TYPE_CHOICES)
@@ -84,6 +81,8 @@ class Item(models.Model):
 
     def get_absolute_url(self):
         return reverse("item_details", kwargs={"id": self.pk})
+    
+
 
 # --------------------
 # ITEM IMAGES
@@ -91,17 +90,15 @@ class Item(models.Model):
 class ItemImage(models.Model):
     item = models.ForeignKey(Item, related_name="images", on_delete=models.CASCADE)
     is_private = models.BooleanField(default=False)
-    
     image = models.ImageField(upload_to="items/")
     base64_image = models.TextField(blank=True)  # Store base64 version for sensitive images
-    perceptual_hash = models.CharField(max_length=64, blank=True)    #Like Hashing but more visual where similar images result in similar hashes
+    perceptual_hash = models.CharField(max_length=64, blank=True)   #Like Hashing but more visual where similar images result in similar hashes
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-def __str__(self):
+    def __str__(self):
         return f"Image for {self.item.title}"
 
-def save(self,*args,**kwargs):
+    def save(self,*args,**kwargs):
         if self.is_private and not self.base64_image:
             import base64
             from io import BytesIO
@@ -116,9 +113,13 @@ def save(self,*args,**kwargs):
             self.base64_image = encoded
         super().save(*args,**kwargs)
 
-def delete(self,*args,**kwargs):
+    def delete(self,*args,**kwargs):
         self.image.delete(save=False)
         super().delete(*args,**kwargs)
+
+    
+
+
 # --------------------
 # MATCHES (CORE LOGIC)
 # --------------------

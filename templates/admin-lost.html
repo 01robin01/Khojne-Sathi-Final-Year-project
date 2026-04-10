@@ -4,6 +4,7 @@
 {% block title %}Admin Lost Items{% endblock title %}
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/admin-lost-found.css' %}">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.min.css">
 {% endblock extra_css %}
 {% block content %}
 
@@ -15,25 +16,50 @@
             <div class="col-md-3">
                 <div class="stat-card">
                     <p>Total Items</p>
-                    <h3>1,247</h3>
+                    <h3>{{items.count}}</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card warning">
                     <p>Pending</p>
-                    <h3>89</h3>
+                    <h3>
+                        {% regroup items by status as items_by_status %}
+                        {% for group in items_by_status %}
+                            {% if group.grouper == 'active' %}
+                                {{ group.list|length }}
+                            {% endif %}
+                        {% endfor %}
+                    </h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card success">
-                    <p>Verified</p>
-                    <h3>1,045</h3>
+                    <p>Matched</p>
+                    <h3>
+                        {% for group in items_by_status %}
+                            {% if group.grouper == 'matched' %}
+                                {{ group.list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        {% endfor %}
+                    </h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card dark">
                     <p>Closed</p>
-                    <h3>113</h3>
+                    <h3>
+
+                        {% for group in items_by_status %}
+                            {% if group.grouper == 'resolved' %}
+                                {{ group.list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        {% endfor %}
+                    </h3>
+
                 </div>
             </div>
         </div>
@@ -48,35 +74,11 @@
             </div>
 
             <!-- Filters -->
-            <div class="card-body border-bottom">
-                <div class="row g-2">
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" placeholder="Search items...">
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select">
-                            <option>All Categories</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select">
-                            <option>All Status</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-light w-100">
-                            <i class="bi bi-funnel"></i> Filter
-                        </button>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Table -->
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
+            <div class="table-responsive p-2">
+                <table class="table align-middle mb-0 " id="lostItemTable">
                     <thead>
                         <tr>
                             <th>Item ID</th>
@@ -90,83 +92,46 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for item in items %}
                         <tr>
-                            <td>#LI-2024-001</td>
+                            <td>#LI-{{item.id}}</td>
                             <td>
-                                <strong>iPhone 14 Pro</strong>
-                                <div class="text-muted small">Space Black, 256GB</div>
+                                <strong>{{item.title}}</strong>
                             </td>
-                            <td>Electronics</td>
-                            <td>Central Park, NYC</td>
+                            <td>{{item.category.name}}</td>
+                            <td>{{item.location_text}}</td>
                             <td>
                                 <div class="img-stack">
-                                    <span></span><span></span><small>+2</small>
+                                    {% if item.images.first.is_private %}
+                                        <img src="data:image/jpeg;base64,{{ item.images.first.base64_image }}" alt="{{ item.title }}" width="20px" height="20px" onclick="window.open('data:image/jpeg;base64,{{ item.images.first.base64_image }}', '_blank')">
+                                    {% else %}
+                                        <span>
+                                        <img src="{{ item.images.first.image.url }}" class="stacked-img" alt="Item Image" width="20px" height="20px" onclick="window.open('{{ item.images.first.image.url }}', '_blank')">
+                                    </span>
+                                    {% endif %}
                                 </div>
                             </td>
                             <td>
-                                <img src="https://i.pravatar.cc/30" class="avatar">
-                                John Smith
+                                {{item.reported_by.username}}
                             </td>
-                            <td><span class="badge bg-warning-subtle text-warning">Pending</span></td>
+                            <td>
+                                {% if item.status == 'active' %}
+                                <span class="badge bg-warning-subtle text-warning">Pending</span></td>
+                                {% elif item.status == 'matched' %}
+                                <span class="badge bg-success-subtle text-success">Matched</span></td>
+                                {% elif item.status == 'resolved' %}
+                                <span class="badge bg-info-subtle text-info">Resolved</span></td>
+                                {% endif %}
                             <td class="text-end">
-                                <a href="{% url 'item_details' 1 %}" class="action view">View</a>
-                                <a href="{% url 'delete_item' 1 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+                                <a href="{% url 'item_details' item.id %}" class="action view">View</a>
+                                <form action="{% url 'delete_item' item.id %}" method="post" style="display:inline;"> 
+                                    {% csrf_token %}
+                                <button onclick="return confirm('Are you sure you want to delete this item?');" class="action delete" type="submit">Delete</button></form>
                             </td>
                         </tr>
-
-                        <tr>
-                            <td>#LI-2024-002</td>
-                            <td>
-                                <strong>Wedding Ring</strong>
-                                <div class="text-muted small">Gold band with diamond</div>
-                            </td>
-                            <td>Jewelry</td>
-                            <td>Times Square, NYC</td>
-                            <td class="img-stack"><span></span><span></span></td>
-                            <td>
-                                <img src="https://i.pravatar.cc/31" class="avatar">
-                                Sarah Johnson
-                            </td>
-                            <td><span class="badge bg-success-subtle text-success">Verified</span></td>
-                            <td class="text-end">
-                                <a href="{% url 'item_details' 2 %}" class="action view">View</a>
-                                <a href="{% url 'delete_item' 2 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>#LI-2024-003</td>
-                            <td>
-                                <strong>Blue Backpack</strong>
-                                <div class="text-muted small">Nike brand, laptop inside</div>
-                            </td>
-                            <td>Clothing</td>
-                            <td>Brooklyn Bridge</td>
-                            <td class="img-stack"><span></span><span></span></td>
-                            <td>
-                                <img src="https://i.pravatar.cc/32" class="avatar">
-                                Mike Davis
-                            </td>
-                            <td><span class="badge bg-secondary-subtle text-secondary">Closed</span></td>
-                            <td class="text-end">
-                                <a href="{% url 'item_details' 3 %}" class="action view">View</a>
-                                <a href="{% url 'delete_item' 3 %}" class="action delete" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="card-footer d-flex justify-content-between">
-                <small>Showing 1 to 3 of 89 results</small>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item"><a class="page-link">Previous</a></li>
-                    <li class="page-item active"><a class="page-link">1</a></li>
-                    <li class="page-item"><a class="page-link">2</a></li>
-                    <li class="page-item"><a class="page-link">3</a></li>
-                    <li class="page-item"><a class="page-link">Next</a></li>
-                </ul>
             </div>
         </div>
 
@@ -174,3 +139,18 @@
 </div>
 
 {% endblock content %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/2.3.7/js/dataTables.min.js"></script>
+<script>
+    let table = new DataTable('#lostItemTable', {
+        paging: true,
+        info: false,
+        searching: true,
+        columnDefs: [
+            { orderable: false, targets: [4, 7] }
+        ]
+    });
+</script>
+{% endblock extra_js %}

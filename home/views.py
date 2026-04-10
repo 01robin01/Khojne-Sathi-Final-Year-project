@@ -102,3 +102,27 @@ def user_detail(request, id):
     user = CustomUser.objects.filter(id=id).first()
     context = {'user_obj': user}
     return render(request, 'admin-user-detail.html', context)
+
+
+
+def admin_lost(req):
+    context = {
+        'items': Item.objects.filter(item_type='lost', is_deleted=False)
+    }
+    return render(req,'admin-lost.html',context)
+
+def admin_found(req):
+    context = {
+        'items': Item.objects.filter(item_type='found', is_deleted=False)
+    }
+    return render(req,'admin-found.html',context)
+def admin_users(req):
+    context = {
+        'users': CustomUser.objects.all()
+    }
+    return render(req,'admin-users.html',context)
+def admin_claims(req):
+    context = {
+        'claims': Item.objects.filter(claimed_by__isnull=False, is_deleted=False)
+    }
+    return render(req,'admin-claims.html',context)
