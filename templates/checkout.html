@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eSewa Payment Flow</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-main: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --accent-green: #21c55e;
+            --accent-green-hover: #16a34a;
+            --shadow-float: 0 20px 60px rgba(0,0,0,0.08); /* Required Anti-Gravity Shadow */
+            --radius-main: 20px; /* Required Rounded Corners */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --input-bg: #f3f4f6;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .base-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 2rem;
+            z-index: 1;
+        }
+
+        /* Abstract card style */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-main);
+            box-shadow: var(--shadow-float);
+            width: 100%;
+            max-width: 380px; /* Required Compact Max Width */
+            padding: 40px 30px; /* Generous Padding */
+            text-align: center;
+            position: relative;
+            animation: float-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        @keyframes float-in {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Initial Proceed View */
+        .initial-view .logo-header {
+            margin-bottom: 24px;
+        }
+        
+        .initial-view h1 { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            letter-spacing: -0.02em;
+        }
+        
+        .initial-view p { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            margin-bottom: 30px; 
+        }
+
+        .esewa-logo { 
+            height: 44px; 
+            object-fit: contain; 
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 999px; /* Pill style for weightless aesthetic */
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+        }
+
+        .btn-green {
+            background-color: var(--accent-green);
+            color: white;
+            box-shadow: 0 8px 24px rgba(33, 197, 94, 0.25);
+        }
+
+        .btn-green:hover {
+            background-color: var(--accent-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(22, 163, 74, 0.35); /* Enhances anti-gravity feel */
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid #e5e7eb;
+            margin-top: 12px;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        /* Overlay & Modal */
+        .overlay {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(17, 24, 39, 0.15); /* Dimmed Background */
+            backdrop-filter: blur(8px); /* Blurred overlay effect */
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            padding: 20px;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-main);
+            box-shadow: var(--shadow-float);
+            width: 100%;
+            max-width: 380px;
+            padding: 40px 30px;
+            transform: scale(0.92) translateY(10px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .overlay.active .modal-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Modal Content */
+        .modal-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-size: 20px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .close-btn:hover { 
+            color: #4b5563; 
+            background: rgba(0,0,0,0.08); 
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-left: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid transparent; /* No heavy borders */
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: var(--font-family);
+        }
+
+        .form-control:focus {
+            outline: none;
+            background-color: #fff;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(33, 197, 94, 0.15);
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Success & Failure States */
+        .state-card {
+            display: none; /* Managed by JS */
+            text-align: center;
+        }
+
+        .state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+        }
+
+        .icon-success {
+            background-color: #f0fdf4;
+            color: var(--accent-green);
+        }
+
+        .icon-failure {
+            background-color: #fef2f2;
+            color: #ef4444;
+        }
+
+        .state-title { 
+            font-size: 1.4rem; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            letter-spacing: -0.02em;
+        }
+        .state-desc { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            margin-bottom: 30px; 
+        }
+
+        /* Footer inside main layout */
+        footer {
+            padding: 24px;
+            text-align: center;
+            width: 100%;
+            opacity: 0;
+            animation: float-in 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .footer-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .footer-logo {
+            height: 20px;
+            opacity: 0.4;
+            filter: grayscale(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .footer-link:hover .footer-logo {
+            opacity: 1;
+            filter: grayscale(0%);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="base-container">
+        <!-- Initial Base Card -->
+        <div class="card initial-view" id="baseCard">
+            <div class="logo-header">
+                <img src="https://esewa.com.np/common/images/esewa_logo.png" alt="eSewa Logo" class="esewa-logo">
+            </div>
+            <h1>Support Our Cause</h1>
+            <p>Your contribution makes a difference.</p>
+            <button class="btn btn-green" onclick="openModal()">Proceed</button>
+        </div>
+    </div>
+
+    <!-- The Blurred Overlay Modal -->
+    <div class="overlay" id="paymentOverlay">
+        <div class="modal-card">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            
+            <!-- Credential Form View -->
+            <div id="credentialView">
+                <div class="modal-header">
+                    <img src="https://esewa.com.np/common/images/esewa_logo.png" alt="eSewa Logo" class="esewa-logo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="esewaId">eSewa ID (Phone/Email)</label>
+                    <input type="text" id="esewaId" class="form-control" placeholder="98XXXXXXXX or email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••">
+                </div>
+                
+                <button class="btn btn-green" style="margin-top: 10px;" onclick="simulatePayment(1)">Login & Pay (Success)</button>
+                <button class="btn btn-outline" style="margin-top: 12px; padding: 8px;" onclick="simulatePayment(0)">Test Failure</button>
+                
+                <div class="secure-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                        Secure Transaction
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div id="successView" class="state-card">
+                <div class="state-icon icon-success">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h2 class="state-title">Transaction Complete</h2>
+                <p class="state-desc">Thank you for your successful payment.</p>
+                <button class="btn btn-outline" onclick="closeModal()">Return</button>
+            </div>
+
+            <!-- Failure State -->
+            <div id="failureView" class="state-card">
+                <div class="state-icon icon-failure">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                <h2 class="state-title">Payment Failed</h2>
+                <p class="state-desc">Something went wrong with the transaction.</p>
+                <button class="btn btn-green" onclick="showView('credentialView')">Retry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimal Footer -->
+    <footer>
+        <h3 class="footer-title">Donation</h3>
+        <a href="#" class="footer-link">
+            <img src="https://esewa.com.np/common/images/esewa_logo.png" alt="Donate with eSewa" class="footer-logo">
+        </a>
+    </footer>
+
+    <!-- Logic strictly for the static interactive demo -->
+    <script>
+        const overlay = document.getElementById('paymentOverlay');
+        const credentialView = document.getElementById('credentialView');
+        const successView = document.getElementById('successView');
+        const failureView = document.getElementById('failureView');
+
+        function openModal() {
+            showView('credentialView');
+            overlay.classList.add('active');
+        }
+
+        function closeModal() {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('esewaId').value = '';
+                document.getElementById('password').value = '';
+            }, 400); // Wait for transition
+        }
+
+        function showView(viewId) {
+            credentialView.style.display = 'none';
+            successView.style.display = 'none';
+            failureView.style.display = 'none';
+            document.getElementById(viewId).style.display = 'block';
+        }
+
+        // isSuccess is a boolean to toggle which state to show for testing purposes
+        function simulatePayment(isSuccess) {
+            const btn = document.activeElement;
+            const originalText = btn.innerHTML;
+            
+            // Loading state
+            btn.innerHTML = 'Processing...';
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
+            
+            // Simulate API request delay
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                
+                if (isSuccess) {
+                    showView('successView');
+                } else {
+                    showView('failureView');
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>

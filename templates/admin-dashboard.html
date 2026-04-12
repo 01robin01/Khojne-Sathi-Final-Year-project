@@ -28,36 +28,36 @@ Admin Dashboard
       <div class="col-md-3">
         <div class="stat-card">
           <span class="icon red"><i class="bi bi-box"></i></span>
-          <h3>1,247</h3>
+          <h3>{{ total_lost }}</h3>
           <p>Total Lost Items</p>
-          <small class="up">▲ 12% from last month</small>
+          <small class="up">▲ Dynamic Total</small>
         </div>
       </div>
 
       <div class="col-md-3">
         <div class="stat-card">
           <span class="icon blue"><i class="bi bi-bag-check"></i></span>
-          <h3>892</h3>
+          <h3>{{ total_found }}</h3>
           <p>Total Found Items</p>
-          <small class="up">▲ 8% from last month</small>
+          <small class="up">▲ Dynamic Total</small>
         </div>
       </div>
 
       <div class="col-md-3">
         <div class="stat-card">
           <span class="icon green"><i class="bi bi-check-circle"></i></span>
-          <h3>654</h3>
+          <h3>{{ total_returned }}</h3>
           <p>Items Returned</p>
-          <small class="up">▲ 15% from last month</small>
+          <small class="up">▲ Dynamic Total</small>
         </div>
       </div>
 
       <div class="col-md-3">
         <div class="stat-card">
           <span class="icon purple"><i class="bi bi-people"></i></span>
-          <h3>3,482</h3>
-          <p>Active Users</p>
-          <small class="up">▲ 23% from last month</small>
+          <h3>{{ active_users|default:0 }} <span style="font-size:16px;">/ {{ total_users|default:0 }}</span></h3>
+          <p>Active / Total Users</p>
+          <small class="up">▲ Recent (30 Days): {{ recent_users }}</small>
         </div>
       </div>
     </div>
@@ -66,26 +66,32 @@ Admin Dashboard
     <div class="row g-4 mb-4">
       <div class="col-md-8">
         <div class="card-box">
-          <h6>Lost Items Over Time</h6>
-          <p class="text-muted">Monthly trend analysis</p>
-          <div class="chart-placeholder">Line Chart</div>
+          <h6>Cumulative User Growth</h6>
+          <p class="text-muted">Growth over time</p>
+          <div>
+            <img src="data:image/png;base64,{{ line_chart }}" alt="Line Chart" class="img-fluid" style="width:100%; border-radius:8px;">
+          </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="card-box">
-          <h6>Resolution Rate</h6>
-          <p class="text-muted">Lost vs Found status</p>
-          <div class="chart-placeholder">Pie Chart</div>
+          <h6>Active vs Inactive</h6>
+          <p class="text-muted">User status ratio</p>
+          <div>
+            <img src="data:image/png;base64,{{ pie_chart }}" alt="Pie Chart" class="img-fluid" style="width:100%; border-radius:8px;">
+          </div>
         </div>
       </div>
     </div>
 
     <!-- BAR -->
     <div class="card-box mb-4">
-      <h6>Found Items by Category</h6>
-      <p class="text-muted">Distribution across categories</p>
-      <div class="chart-placeholder">Bar Chart</div>
+      <h6>Users Registered Per Month</h6>
+      <p class="text-muted">Monthly registrations</p>
+      <div>
+        <img src="data:image/png;base64,{{ bar_chart }}" alt="Bar Chart" class="img-fluid" style="width:100%; border-radius:8px;">
+      </div>
     </div>
 
     <!-- QUICK ACTIONS -->

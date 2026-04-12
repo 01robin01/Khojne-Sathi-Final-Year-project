@@ -15,25 +15,42 @@
             <div class="col-md-3">
                 <div class="stat-card">
                     <p>Total Items</p>
-                    <h3>986</h3>
+                    <h3>{{ items.count }}</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card warning">
                     <p>Pending</p>
-                    <h3>41</h3>
+                    <h3>  {% regroup items by status as items_by_status %}
+                        {% for group in items_by_status %}
+                            {% if group.grouper == 'active' %}
+                                {{ group.list|length }}
+                            {% endif %}
+                        {% endfor %}</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card success">
                     <p>Verified</p>
-                    <h3>812</h3>
+                    <h3> {% for group in items_by_status %}
+                            {% if group.grouper == 'matched' %}
+                                {{ group.list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        {% endfor %}    </h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card dark">
                     <p>Closed</p>
-                    <h3>133</h3>
+                    <h3> {% for group in items_by_status %}
+                            {% if group.grouper == 'resolved' %}
+                                {{ group.list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        {% endfor %}</h3>
                 </div>
             </div>
         </div>
