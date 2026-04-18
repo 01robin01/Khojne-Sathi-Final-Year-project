@@ -46,7 +46,7 @@
                         <tr>
                             <td>#U{{ user.id }}</td>
                             <td>
-                                <img src="https://i.pravatar.cc/32?u={{ user.id }}" class="avatar">
+                              
                                 {{ user.first_name }} {{ user.last_name }}
                                 {% if not user.first_name and not user.last_name %}{{ user.username }}{% endif %}
                             </td>

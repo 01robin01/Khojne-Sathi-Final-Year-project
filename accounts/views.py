@@ -10,6 +10,9 @@ from django.contrib.auth import get_user_model
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+import uuid
+from django.core.mail import send_mail
+from django.conf import settings
 
 CustomUser = get_user_model()
 
@@ -33,7 +36,7 @@ def register_view(request):
             messages.error(request, "Email is required.")
             return render(request, 'register.html', {"prefill": google_prefill})
 
-        if CustomUser.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email,is_active=True).exists():
             messages.error(request, "Email already exists.")
             return render(request, 'register.html', {"prefill": google_prefill})
 
@@ -57,10 +60,19 @@ def register_view(request):
             secondary_contact=secondary_contact,
         )
         user.set_password(password)
+        user.is_active = False
+        activation_token = str(uuid.uuid4().hex)
+        user.activation_token = activation_token
         user = user.save()
-        login(request, user)
-
-
+        url = f"http://localhost:8000/account/activate/{activation_token}/"
+        send_mail(
+            'Activate Your Account',
+            f'Please click the link to activate your account: {url}',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        messages.success(request, "Account created successfully. Please check your email to activate your account.")
         # Link Google account if present
         if google_prefill:
             SocialAccount.objects.create(
@@ -81,6 +93,23 @@ def register_view(request):
     # GET request → prefill form
     return render(request, 'register.html', {"prefill": google_prefill})
 
+
+def activate_user(request, token):
+    try:
+        user = CustomUser.objects.get(activation_token=token)
+        if user.activation_token == token:
+            user.is_active = True
+            user.activation_token = None
+            user.save()
+            messages.success(request, "Account activated successfully. Please log in.")
+            return redirect('login')
+        else:
+            messages.error(request, "Invalid activation link.")
+            return redirect('login')
+    except CustomUser.DoesNotExist:
+        messages.error(request, "User does not exist.")
+        return redirect('login')
+    
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')

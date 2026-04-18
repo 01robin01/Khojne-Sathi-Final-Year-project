@@ -14,7 +14,7 @@
             {% if user_obj %}
             <div class="row">
                 <div class="col-md-4 text-center border-end">
-                    <img src="https://i.pravatar.cc/150?u={{ user_obj.id|default:'none' }}" class="rounded-circle mb-3 border bg-light" alt="Profile avatar" style="width:150px;height:150px;">
+                   
                     <h4>{{ user_obj.first_name }} {{ user_obj.last_name }}</h4>
                     <p class="text-muted">@{{ user_obj.username }}</p>
                     {% if user_obj.is_active %}

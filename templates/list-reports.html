@@ -40,18 +40,18 @@
                             </td>
                             <td>{{ report.created_at|date:"M d, Y" }}</td>
                             <td>
-                                {% if report.status == 'Pending' %}
-                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
-                                {% elif report.status == 'Resolved' %}
+                             {% if report.status == 'pending' %}
+                                <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                {% elif report.status == 'resolved' %}
                                     <span class="badge bg-success-subtle text-success">Resolved</span>
-                                {% elif report.status == 'Dismissed' %}
+                                {% elif report.status == 'dismissed' %}
                                     <span class="badge bg-secondary-subtle text-secondary">Dismissed</span>
                                 {% else %}
-                                    <span class="badge bg-info-subtle text-info">{{ report.status|default:'Pending' }}</span>
+                                    <span class="badge bg-info-subtle text-info">{{ report.status }}</span>
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <a href="{% url 'report_detail' %}?id={{ report.id }}" class="btn btn-sm btn-outline-primary">View</a>
+                               <a href="{% url 'admin_report_detail' report.id %}" class="btn btn-sm btn-outline-primary">View</a>
                                 <!-- Delete form/button -->
                                 <form action="{% url 'delete_report' report.id %}" method="POST" class="d-inline">
                                     {% csrf_token %}

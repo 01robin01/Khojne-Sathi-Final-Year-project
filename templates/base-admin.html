@@ -30,42 +30,42 @@
     </div>
 
     <ul class="menu">
-      <a href="{% url 'admin_dashboard' %}" class="text-decoration-none">
-      <li>
-          <i class="bi bi-speedometer2"></i> Dashboard
-        </li>
-      </a>
+    <a href="{% url 'admin_dashboard' %}" class="text-decoration-none">
+        <li><i class="bi bi-speedometer2"></i> Dashboard</li>
+    </a>
 
-      <a href="{% url 'admin_lost' %}" class="text-decoration-none">
-      <li>
-        <i class="bi bi-exclamation-circle"></i> Lost Items
-      </li>
-      </a>
-      <a href="{% url 'admin_found' %}" class="text-decoration-none">
-      <li>
-          <i class="bi bi-check-circle"></i> Found Items
-      </li>
-      </a>
+    <a href="{% url 'admin_lost' %}" class="text-decoration-none">
+        <li><i class="bi bi-exclamation-circle"></i> Lost Items</li>
+    </a>
 
-      <a href="{% url 'admin_users' %}" class="text-decoration-none">
-      <li>
-          <i class="bi bi-people"></i> Users
-      </li>
-      </a>
+    <a href="{% url 'admin_found' %}" class="text-decoration-none">
+        <li><i class="bi bi-check-circle"></i> Found Items</li>
+    </a>
 
-      <a href="{% url 'admin_claims' %}" class="text-decoration-none">
-        <li>
-          <i class="bi bi-flag"></i> Claims
-        </li>
-      </a>
-    </ul>
+    <a href="{% url 'admin_users' %}" class="text-decoration-none">
+        <li><i class="bi bi-people"></i> Users</li>
+    </a>
 
-    <div class="admin-profile">
-      <img src="https://i.pravatar.cc/40" alt="">
-      <div>
-        <strong>John Admin</strong>
-        <small>Administrator</small>
-      </div>
+    <a href="{% url 'admin_claims' %}" class="text-decoration-none">
+        <li><i class="bi bi-flag"></i> Claims</li>
+    </a>
+
+    <a href="{% url 'item_reports' %}" class="text-decoration-none">
+        <li><i class="bi bi-shield-exclamation"></i> All Reports</li>
+    </a>
+</ul>
+
+        <div class="admin-profile">
+        <div>
+            <strong>
+                {% if request.user.first_name or request.user.last_name %}
+                    {{ request.user.first_name }} {{ request.user.last_name }}
+                {% else %}
+                    {{ request.user.username }}
+                {% endif %}
+            </strong>
+            <small>Administrator</small>
+        </div>
     </div>
       <script>
         items = document.querySelectorAll('.menu>a>li');

@@ -28,17 +28,19 @@
                         <tr>
                             <td>#C{{ claim.id }}</td>
                             <td>
-                                {{ claim.user.first_name }} {{ claim.user.last_name }}
-                                {% if not claim.user.first_name and not claim.user.last_name %}{{ claim.user.username }}{% endif %}
+                                {{ claim.claimant.first_name }} {{ claim.claimant.last_name }}
+                                {% if not claim.claimant.first_name and not claim.claimant.last_name %}{{ claim.claimant.username }}{% endif %}
                             </td>
                             <td>{{ claim.item.title }}</td>
                             <td>{{ claim.created_at|date:"M d, Y" }}</td>
                             <td>
-                                {% if claim.status == 'Pending' %}
-                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
-                                {% elif claim.status == 'Approved' %}
+                                {% if claim.status == 'submitted' %}
+                                    <span class="badge bg-secondary-subtle text-secondary">Submitted</span>
+                                {% elif claim.status == 'under_review' %}
+                                    <span class="badge bg-warning-subtle text-warning">Under Review</span>
+                                {% elif claim.status == 'approved' %}
                                     <span class="badge bg-success-subtle text-success">Approved</span>
-                                {% elif claim.status == 'Rejected' %}
+                                {% elif claim.status == 'rejected' %}
                                     <span class="badge bg-danger-subtle text-danger">Rejected</span>
                                 {% else %}
                                     <span class="badge bg-secondary-subtle text-secondary">{{ claim.status }}</span>
@@ -61,7 +63,6 @@
                 </table>
             </div>
 
-            <!-- Pagination (if applicable, following Users table style) -->
             {% if page_obj %}
             <div class="card-footer d-flex justify-content-between align-items-center">
                 <small>Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} results</small>

@@ -79,27 +79,30 @@
                 required
               >
               <span class="input-group-text">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-envelope"></i>
             </div>
           </div>
 
           <!-- Password -->
-          <div class="mb-3">
-            <label class="form-label">Password</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-lock"></i></span>
-              <input
-                type="password"
-                name="password"
-                class="form-control"
-                placeholder="Enter your password"
-                required
-              >
-              <span class="input-group-text">
-                <i class="bi bi-eye"></i>
-              </span>
-            </div>
-          </div>
+     <div class="mb-3">
+    <label class="form-label">Password</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+        <input
+            type="password"
+            id="passwordInput"
+            name="password"
+            class="form-control"
+            placeholder="Enter your password"
+            required
+        >
+        <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+            <i class="bi bi-eye" id="eyeIcon"></i>
+        </span>
+    </div>
+</div>
+
+
 
           <!-- Options -->
           <div class="d-flex justify-content-between mb-3">
@@ -138,6 +141,21 @@
 
   </div>
 </div>
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const input = document.getElementById('passwordInput');
+        const icon = document.getElementById('eyeIcon');
 
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+</script>
 </body>
 </html>

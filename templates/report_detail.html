@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-10 p-4">
+    <section class="page-header mb-4">
+        <h5 class="fw-semibold mb-1">Report Item</h5>
+        <p class="text-muted mb-0">Let us know why you're reporting this item</p>
+    </section>
+    <div class="card shadow-sm" style="max-width: 600px;">
+        <div class="card-body">
+            {% if item %}
+                <p class="mb-3">You are reporting: <strong>{{ item.title }}</strong></p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
+                        <textarea name="reason" class="form-control" rows="4" placeholder="Describe why you are reporting this item..."></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-flag"></i> Submit Report
+                        </button>
+                        <a href="{% url 'item_details' item.id %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            {% else %}
+                <p class="text-muted">No item selected. <a href="{% url 'search_page' %}">Go back to search.</a></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
