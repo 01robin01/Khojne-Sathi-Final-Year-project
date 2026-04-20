@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from home.models import Item, Category,ItemImage
+from home.models import Claim, Item, Category,ItemImage
 from PIL import Image
 import imagehash
 from django.contrib import messages
@@ -14,7 +14,6 @@ from django.core.paginator import Paginator
 
 @login_required
 def report_found(request):
-
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
@@ -44,8 +43,6 @@ def report_found(request):
         )
 
         for image in images:
-
-          
             if image.size > settings.MAX_IMAGE_SIZE_MB * 1024 * 1024:
                 messages.error(
                     request,
@@ -83,7 +80,7 @@ def report_found(request):
                 ItemImage.objects.create(
                     item=item,
                     image=django_image,
-                     perceptual_hash=str(phash),
+                    perceptual_hash=str(phash),
                     is_private=is_sensitive
                 )
 
@@ -103,8 +100,9 @@ def report_found(request):
 
 
 
-
+@login_required
 def my_found_items(request):
+    
     items = Item.objects.filter(
         reported_by=request.user,
         item_type='found'
@@ -113,7 +111,9 @@ def my_found_items(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
-        'page_obj': page_obj
+        'page_obj': page_obj,
+        'my_lost_items_count': Item.objects.filter(reported_by=request.user, item_type='lost').count(),
+        'my_found_items_count': items.count()
     }
     return render(request, 'my-found-items.html', context)
 
@@ -122,6 +122,8 @@ def my_found_items(request):
 def update_item(request, item_id):
     item = get_object_or_404(Item, id=item_id, item_type='found')
     categories = Category.objects.all()
+    if item.reported_by != request.user:
+        return HttpResponseForbidden("You are not allowed to edit this item.")
     
     if request.method == 'POST':
         print(request.POST.items())
@@ -218,3 +220,27 @@ def found_item_detail(request, item_id):
         "related_items": related_items
     }
     return render(request, "item-details.html", context)
+
+
+
+@login_required
+def admin_claims(request):
+    claims = Claim.objects.select_related('item', 'claimant').order_by('-created_at')
+
+    paginator = Paginator(claims, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'admin-claims.html', {
+        'claims': page_obj,
+        'page_obj': page_obj,
+    })
+
+
+@login_required
+def admin_claim_detail(request, id):
+    claim = get_object_or_404(
+        Claim.objects.select_related('item', 'claimant', 'item__category'),
+        id=id
+    )
+    return render(request, 'admin-claim.html', {'claim': claim})

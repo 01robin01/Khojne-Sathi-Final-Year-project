@@ -1,6 +1,6 @@
 
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Category, Item, ItemImage
+from .models import Category, Claim, Item, ItemImage
 from PIL import Image
 from django.contrib import messages
 import imagehash
@@ -32,6 +32,76 @@ def index(request):
 
     return render(request, "Index.html", context)
 
+# def search(request):
+#     if request.method == 'POST':
+#         query = request.POST.get("q", "")
+#         img = request.FILES.get("img", None)
+        
+#         results = Item.objects.none()
+
+#         if query:
+#             results = Item.objects.filter(title__icontains=query, is_deleted=False)
+#             print("Text Results:", results)
+
+#         if img is not None:
+#             print("Image uploaded for search.")
+#             image = Image.open(img)
+#             phash = imagehash.phash(image)
+#             similar_images = ItemImage.objects.filter(perceptual_hash__startswith=str(phash)[:4]).select_related('item')
+#             image_item_ids = [img_obj.item.id for img_obj in similar_images]
+#             image_results = Item.objects.filter(id__in=image_item_ids, is_deleted=False)
+#             results = results | image_results
+#             print("Image Results:", image_results)
+
+#         context = {
+#             "query": query,
+#             "matches": results.distinct(),
+#             "categories": Category.objects.all(),
+#             "img_searched": img is not None
+#         }
+
+#         return render(request, "search-page.html", context, status=201)
+
+# def search(request):
+    if request.method == 'POST':
+        query = request.POST.get("q", "")
+        img = request.FILES.get("img", None)
+
+        results = Item.objects.none()
+
+        if query:
+            results = Item.objects.filter(title__icontains=query, is_deleted=False)
+
+        if img is not None:
+            image = Image.open(img)
+            query_phash = imagehash.phash(image)
+
+            # Fetch all hashes and compare with a threshold in Python
+            all_images = ItemImage.objects.select_related('item').exclude(perceptual_hash__isnull=True).exclude(perceptual_hash__exact='')
+            
+            similar_item_ids = []
+            for img_obj in all_images:
+                try:
+                    stored_hash = imagehash.hex_to_hash(img_obj.perceptual_hash)
+                    # Hamming distance <= 10 means visually similar
+                    if query_phash - stored_hash <= 10:
+                        similar_item_ids.append(img_obj.item.id)
+                except Exception as e:
+                    print(f"Hash comparison error for image {img_obj.id}: {e}")
+                    continue
+
+            image_results = Item.objects.filter(id__in=similar_item_ids, is_deleted=False)
+            results = results | image_results
+
+        context = {
+            "query": query,
+            "matches": results.distinct(),
+            "categories": Category.objects.all(),
+            "img_searched": img is not None,
+        }
+
+        return render(request, "search-page.html", context, status=201)
+
 def search(request):
     if request.method == 'POST':
         query = request.POST.get("q", "")
@@ -41,29 +111,38 @@ def search(request):
 
         if query:
             results = Item.objects.filter(title__icontains=query, is_deleted=False)
-            print("Text Results:", results)
 
         if img is not None:
-            print("Image uploaded for search.")
             image = Image.open(img)
-            phash = imagehash.phash(image)
-            similar_images = ItemImage.objects.filter(perceptual_hash__startswith=str(phash)[:4]).select_related('item')
-            image_item_ids = [img_obj.item.id for img_obj in similar_images]
-            image_results = Item.objects.filter(id__in=image_item_ids, is_deleted=False)
+            query_phash = imagehash.phash(image, hash_size=16)
+            
+            all_images = ItemImage.objects.select_related('item').exclude(
+                perceptual_hash__isnull=True
+            ).exclude(
+                perceptual_hash__exact=''
+            )
+            
+            similar_item_ids = []
+            for img_obj in all_images:
+                try:
+                    stored_hash = imagehash.hex_to_hash(img_obj.perceptual_hash)
+                    if query_phash - stored_hash <= 20:
+                        similar_item_ids.append(img_obj.item.id)
+                except Exception as e:
+                    print(f"Hash comparison error for image {img_obj.id}: {e}")
+                    continue
+
+            image_results = Item.objects.filter(id__in=similar_item_ids, is_deleted=False)
             results = results | image_results
-            print("Image Results:", image_results)
 
         context = {
             "query": query,
             "matches": results.distinct(),
             "categories": Category.objects.all(),
-            "img_searched": img is not None
+            "img_searched": img is not None,
         }
 
         return render(request, "search-page.html", context, status=201)
-
-
-
 def item_details(req,id):
     context = {
         'item':Item.objects.get(id=id),
@@ -415,3 +494,133 @@ def delete_report(request, id):
 def admin_report_detail(request, id):
     report = get_object_or_404(Report, id=id)
     return render(request, "admin_report_detail.html", {"report": report})
+
+# @login_required
+# def admin_claims(request):
+#     claims = Claim.objects.select_related('item', 'claimant').order_by('-created_at')
+
+#     paginator = Paginator(claims, 10)
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+
+#     return render(request, 'admin-claims.html', {
+#         'claims': page_obj,
+#         'page_obj': page_obj,
+#     })
+
+
+# @login_required
+# def admin_claim_detail(request, id):
+#     claim = get_object_or_404(
+#         Claim.objects.select_related('item', 'claimant', 'reviewed_by', 'item__category'),
+#         id=id
+#     )
+#     return render(request, 'admin-claim.html', {'claim': claim})
+
+
+# @login_required
+# def process_claim(request, id):
+#     claim = get_object_or_404(Claim, id=id)
+
+#     if request.method == 'POST':
+#         action = request.POST.get('action')
+#         admin_remarks = request.POST.get('admin_remarks', '').strip()
+
+#         if action == 'delete':
+#             claim.delete()
+#             messages.success(request, 'Claim deleted.')
+#             return redirect('admin_claims')
+
+#         claim.admin_remarks = admin_remarks
+#         claim.reviewed_by = request.user
+
+#         if action == 'approve':
+#             claim.status = 'approved'
+#             claim.save()
+#             messages.success(request, 'Claim approved successfully.')
+
+#         elif action == 'reject':
+#             claim.status = 'rejected'
+#             claim.save()
+#             messages.success(request, 'Claim rejected.')
+
+#         else:
+#             messages.error(request, 'Invalid action.')
+
+#         return redirect('admin_claim', id=claim.id)
+
+#     return redirect('admin_claim', id=claim.id)
+
+
+# @login_required
+# def delete_claim(request, id):
+
+
+@login_required
+def admin_claims(request):
+    claims = Claim.objects.select_related('item', 'claimant').order_by('-created_at')
+
+    paginator = Paginator(claims, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'admin-claims.html', {
+        'claims': page_obj,
+        'page_obj': page_obj,
+    })
+
+
+@login_required
+def admin_claim_detail(request, id):
+    claim = get_object_or_404(
+        Claim.objects.select_related('item', 'claimant', 'reviewed_by', 'item__category'),
+        id=id
+    )
+    return render(request, 'admin-claim.html', {'claim': claim})
+
+
+@login_required
+def process_claim(request, id):
+    claim = get_object_or_404(Claim, id=id)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        admin_remarks = request.POST.get('admin_remarks', '').strip()
+
+        if action == 'delete':
+            claim.delete()
+            messages.success(request, 'Claim deleted.')
+            return redirect('admin_claims')
+
+        claim.admin_remarks = admin_remarks
+        claim.reviewed_by = request.user
+
+        if action == 'approve':
+            claim.status = 'approved'
+            claim.save()
+            messages.success(request, 'Claim approved successfully.')
+
+        elif action == 'reject':
+            claim.status = 'rejected'
+            claim.save()
+            messages.success(request, 'Claim rejected.')
+
+        else:
+            messages.error(request, 'Invalid action.')
+
+        return redirect('admin_claim', id=claim.id)
+
+    return redirect('admin_claim', id=claim.id)
+
+@login_required
+def delete_claim(request, id):
+    claim = get_object_or_404(Claim, id=id)
+    if request.method == 'POST':
+        claim.delete()
+        messages.success(request, 'Claim deleted.')
+    return redirect('admin_claims')
+    claim = get_object_or_404(Claim, id=id)
+    if request.method == 'POST':
+        claim.delete()
+        messages.success(request, 'Claim deleted.')
+    return redirect('admin_claims')

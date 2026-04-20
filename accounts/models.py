@@ -23,7 +23,7 @@ class CustomUser(AbstractUser):
 
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = [ 'phone']
+    REQUIRED_FIELDS = [ 'phone','username']
     
     class Meta:
         verbose_name = 'Custom User'

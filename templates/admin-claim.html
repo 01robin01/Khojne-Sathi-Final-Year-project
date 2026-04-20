@@ -6,6 +6,7 @@
 {% endblock extra_css %}
 {% block content %}
 
+<div class="container-fluid d-flex">
     <!-- Main Content -->
     <main class="content flex-grow-1">
 
@@ -13,9 +14,7 @@
         <div class="page-header d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h4 class="fw-semibold mb-1">Claim Details</h4>
-                <p class="text-muted mb-0">
-                    Review item information and verify ownership
-                </p>
+                <p class="text-muted mb-0">Review item information and verify ownership</p>
             </div>
             <a href="{% url 'admin_claims' %}" class="btn btn-outline-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Back to Claims
@@ -42,15 +41,15 @@
                             <div class="col-md-4">
                                 <small class="text-muted">Status</small>
                                 <p class="mb-2">
-                                    {% if claim.status == 'Pending' %}
-                                        <span class="badge bg-warning-subtle text-warning">Pending</span>
-                                    {% elif claim.status == 'Approved' %}
-                                        <span class="badge bg-success-subtle text-success">Approved</span>
-                                    {% elif claim.status == 'Rejected' %}
-                                        <span class="badge bg-danger-subtle text-danger">Rejected</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary-subtle text-secondary">{{ claim.status }}</span>
-                                    {% endif %}
+                                {% if claim.status == 'pending' %}
+                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                {% elif claim.status == 'approved' %}
+                                    <span class="badge bg-success-subtle text-success">Approved</span>
+                                {% elif claim.status == 'rejected' %}
+                                    <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary">{{ claim.status }}</span>
+                                {% endif %}
                                 </p>
                             </div>
                             <div class="col-md-4">
@@ -58,6 +57,15 @@
                                 <p class="mb-2">{{ claim.created_at|date:"F d, Y" }}</p>
                             </div>
                         </div>
+
+                        {% if claim.reviewed_by %}
+                        <div class="row mt-1">
+                            <div class="col-md-6">
+                                <small class="text-muted">Reviewed By</small>
+                                <p class="mb-0">{{ claim.reviewed_by.get_full_name|default:claim.reviewed_by.username }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -71,20 +79,22 @@
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <small class="text-muted">Name</small>
-                                <p class="mb-0">{{ claim.user.first_name }} {{ claim.user.last_name }}</p>
-                                {% if not claim.user.first_name and not claim.user.last_name %}
-                                    <p class="mb-0">{{ claim.user.username }}</p>
-                                {% endif %}
+                                <p class="mb-0">
+                                    {% if claim.claimant.first_name or claim.claimant.last_name %}
+                                        {{ claim.claimant.first_name }} {{ claim.claimant.last_name }}
+                                    {% else %}
+                                        {{ claim.claimant.username }}
+                                    {% endif %}
+                                </p>
                             </div>
                             <div class="col-md-6 mb-2">
-                                <small class="text-muted">Phone</small>
-                                <p class="mb-0">{{ claim.user.phone|default:"N/A" }}</p>
+                                <small class="text-muted">Username</small>
+                                <p class="mb-0">@{{ claim.claimant.username }}</p>
                             </div>
                         </div>
-
                         <div class="mb-0">
                             <small class="text-muted">Email</small>
-                            <p class="mb-0">{{ claim.user.email }}</p>
+                            <p class="mb-0">{{ claim.claimant.email }}</p>
                         </div>
                     </div>
                 </div>
@@ -96,13 +106,30 @@
                         <strong>Item Information</strong>
                     </div>
                     <div class="card-body">
-                        {% if claim.item.image %}
-                        <img src="{{ claim.item.image.url }}" class="img-fluid claim-img mb-3 rounded" style="max-height: 250px; object-fit: cover; width: 100%;">
-                        {% endif %}
+
+                        <!-- Item Image -->
+                        {% with claim.item.images.first as item_image %}
+                            {% if item_image %}
+                                {% if item_image.is_private %}
+                                    <img src="data:image/jpeg;base64,{{ item_image.base64_image }}"
+                                         class="img-fluid claim-img mb-3 rounded"
+                                         style="max-height: 250px; object-fit: cover; width: 100%;">
+                                {% else %}
+                                    <img src="{{ item_image.image.url }}"
+                                         class="img-fluid claim-img mb-3 rounded"
+                                         style="max-height: 250px; object-fit: cover; width: 100%;">
+                                {% endif %}
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3"
+                                     style="height: 150px;">
+                                    <i class="bi bi-image text-muted fs-1"></i>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
 
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <small class="text-muted">Name (Title)</small>
+                                <small class="text-muted">Title</small>
                                 <p class="fw-semibold">{{ claim.item.title }}</p>
                             </div>
                             <div class="col-md-6">
@@ -114,11 +141,11 @@
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <small class="text-muted">Location</small>
-                                <p>{{ claim.item.location }}</p>
+                                {{ claim.item.location_text|default:"N/A" }}
                             </div>
                             <div class="col-md-6">
                                 <small class="text-muted">Item Type</small><br>
-                                {% if claim.item.item_type == 'Found' %}
+                                {% if claim.item.item_type == 'found' %}
                                     <span class="badge bg-success-subtle text-success">Found</span>
                                 {% else %}
                                     <span class="badge bg-danger-subtle text-danger">Lost</span>
@@ -128,46 +155,56 @@
 
                         <div class="mb-0">
                             <small class="text-muted">Description</small>
-                            <p class="text-muted mb-0">
-                                {{ claim.item.description }}
-                            </p>
+                            <p class="text-muted mb-0">{{ claim.item.description|default:"No description provided." }}</p>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- RIGHT -->
             <div class="col-lg-5">
 
-                <!-- 4. Proof Image -->
+                <!-- 4. Proof -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header d-flex align-items-center gap-2">
                         <i class="bi bi-shield-check text-info"></i>
-                        <strong>Proof Description & Image</strong>
+                        <strong>Proof Description & File</strong>
                     </div>
                     <div class="card-body">
                         <small class="text-muted">Proof Description</small>
                         <p class="text-muted mb-3">
-                            {{ claim.proof_description|default:"No description provided." }}
+                            {{ claim.proof_text|default:"No description provided." }}
                         </p>
 
-                        <div class="proof-grid">
-                            {% if claim.proof_image %}
-                                <div class="proof-card w-100">
-                                    <img src="{{ claim.proof_image.url }}" class="img-fluid rounded w-100" style="max-height: 300px; object-fit: contain; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        {% if claim.proof_files %}
+                            <div class="proof-card w-100">
+                                <img src="{{ claim.proof_files.url }}"
+                                     class="img-fluid rounded w-100"
+                                     style="max-height: 300px; object-fit: contain; cursor: pointer;"
+                                     onclick="window.open(this.src, '_blank')"
+                                     onerror="this.style.display='none'; document.getElementById('proof-fallback').style.display='flex';">
+                                <!-- fallback if file is not an image -->
+                                <div id="proof-fallback" class="d-none align-items-center justify-content-center gap-2 mt-2">
+                                    <i class="bi bi-file-earmark text-muted fs-3"></i>
+                                    <a href="{{ claim.proof_files.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        View Uploaded File
+                                    </a>
                                 </div>
-                            {% else %}
-                                <div class="proof-card placeholder p-4 text-center bg-light w-100 rounded">
-                                    <i class="bi bi-image text-muted display-4"></i>
-                                    <p class="text-muted mt-2 mb-0">No proof image uploaded</p>
-                                </div>
-                            {% endif %}
-                        </div>
+                            </div>
+                        {% else %}
+                            <div class="p-4 text-center bg-light w-100 rounded">
+                                <i class="bi bi-image text-muted display-4"></i>
+                                <p class="text-muted mt-2 mb-0">No proof file uploaded</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
+                
+                
                 <!-- 5. Admin Actions -->
-                <div class="card shadow-sm decision-card">
+                <div class="card shadow-sm">
                     <div class="card-header d-flex align-items-center gap-2">
                         <i class="bi bi-gavel text-danger"></i>
                         <strong>Admin Actions</strong>
@@ -175,34 +212,62 @@
                     <div class="card-body">
                         <form method="POST" action="{% url 'process_claim' claim.id %}">
                             {% csrf_token %}
-                            <label class="form-label small fw-semibold">
-                                Admin Remarks
-                            </label>
+                            <label class="form-label small fw-semibold">Admin Remarks</label>
                             <textarea name="admin_remarks" class="form-control mb-4" rows="3"
-                                      placeholder="Reason for verification or rejection (optional)">{{ claim.admin_remarks|default:'' }}</textarea>
+                                    placeholder="Reason for approval or rejection (optional)">{{ claim.admin_remarks|default:'' }}</textarea>
 
                             <div class="d-flex justify-content-end gap-2 flex-wrap">
-                                <!-- Delete Button (triggers form outside or relies on specific URL) -->
-                                <button type="submit" name="action" value="delete" class="btn btn-outline-secondary me-auto" onclick="return confirm('Are you sure you want to delete this claim permanently?');">
+
+                                <!-- Delete -->
+                                <button type="submit"
+                                        name="action"
+                                        value="delete"
+                                        class="btn btn-outline-secondary me-auto"
+                                        onclick="return confirm('Delete this claim permanently?');">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
 
-                                {% if claim.status != 'Rejected' %}
-                                <button type="submit" name="action" value="reject" class="btn btn-outline-danger">
-                                    <i class="bi bi-x-circle"></i> Reject
-                                </button>
-                                {% endif %}
+                                <!-- Suspend User -->
+                    {% if claim.claimant.is_active %}
+                    <form action="{% url 'suspend_user' claim.claimant.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="btn btn-outline-warning"
+                                onclick="return confirm('Suspend user {{ claim.claimant.username }} for inappropriate claim?');">
+                            <i class="bi bi-person-slash"></i> Suspend User
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="btn btn-outline-warning disabled">
+                        <i class="bi bi-person-slash"></i> User Suspended
+                    </span>
+                    {% endif %}
 
-                                {% if claim.status != 'Approved' %}
-                                <button type="submit" name="action" value="approve" class="btn btn-success">
-                                    <i class="bi bi-check-circle"></i> Approve
-                                </button>
-                                {% endif %}
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <!-- Reject -->
+                {% if claim.status != 'rejected' %}
+                <button type="submit"
+                        name="action"
+                        value="reject"
+                        class="btn btn-outline-danger"
+                        onclick="return confirm('Reject this claim?');">
+                    <i class="bi bi-x-circle"></i> Reject
+                </button>
+                {% endif %}
 
+                <!-- Approve -->
+                {% if claim.status != 'approved' %}
+                <button type="submit"
+                        name="action"
+                        value="approve"
+                        class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Approve
+                </button>
+                {% endif %}
+
+            </div>
+        </form>
+    </div>
+</div>
             </div>
         </div>
 
@@ -210,4 +275,3 @@
 </div>
 
 {% endblock content %}
-

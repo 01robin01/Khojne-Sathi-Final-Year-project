@@ -153,14 +153,38 @@ class Match(models.Model):
 # --------------------
 # CLAIM (DEPENDS ON MATCH)
 # --------------------
+# class Claim(models.Model):
+#     STATUS_CHOICES = (
+#         ("submitted", "Submitted"),
+#         ("under_review", "Under Review"),
+#         ("approved", "Approved"),
+#         ("rejected", "Rejected"),
+#     )
+    
+
+#     item = models.ForeignKey(Item, related_name="claims", on_delete=models.CASCADE)
+#     claimant = models.ForeignKey(User, on_delete=models.CASCADE)
+
+#     proof_text = models.TextField()
+#     proof_files = models.FileField(upload_to="claims/", blank=True)
+
+#     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="submitted")
+#     admin_remarks = models.TextField(blank=True, default="")
+#     reviewed_by = models.ForeignKey(
+#         User,
+#         null=True,
+#         blank=True,
+#         related_name="reviewed_claims",
+#         on_delete=models.SET_NULL,
+#     )
+
+#     created_at = models.DateTimeField(auto_now_add=True)
 class Claim(models.Model):
     STATUS_CHOICES = (
-        ("submitted", "Submitted"),
-        ("under_review", "Under Review"),
+        ("pending", "Pending"),
         ("approved", "Approved"),
         ("rejected", "Rejected"),
     )
-    
 
     item = models.ForeignKey(Item, related_name="claims", on_delete=models.CASCADE)
     claimant = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -168,7 +192,8 @@ class Claim(models.Model):
     proof_text = models.TextField()
     proof_files = models.FileField(upload_to="claims/", blank=True)
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="submitted")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    admin_remarks = models.TextField(blank=True, default="")
     reviewed_by = models.ForeignKey(
         User,
         null=True,
@@ -178,7 +203,6 @@ class Claim(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
-
 
 # --------------------
 # NOTIFICATIONS

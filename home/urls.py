@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin-claims/',admin_claims, name='admin_claims'),
     path('admin-claim/<int:id>/', admin_claim_detail, name='admin_claim'),
     path('process-claim/<int:id>/', process_claim, name='process_claim'),
-
+    path('delete-claim/<int:id>/', delete_claim, name='delete_claim'),
     path('item-reports/', item_reports, name='item_reports'),
     path('reports/', report_detail, name='report_detail'),
     path('delete-report/<int:id>/', delete_report, name='delete_report'),

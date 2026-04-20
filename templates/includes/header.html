@@ -1,3 +1,18 @@
+{% comment %} <style>
+    .image-upload-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #fff;
+    font-size: 18px;
+}
+
+</style>
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="{% url 'landing_page' %}">
@@ -23,20 +38,38 @@
                 <button class="btn btn-danger btn-sm"> − Lost</button>
             </a>
 
-        <form class="d-flex align-items-center ms-2 search-box">
+        <form class="d-flex align-items-center ms-2 search-box" method="POST" action="{% url 'search_page' %}" enctype="multipart/form-data">
+            {% csrf_token %}
     <div class="input-group input-group-sm">
-        
+       
         <!-- Text search -->
         <input 
         type="search" 
         class="form-control" 
         placeholder="Search items"
+        name="q"
+        value="{{ request.POST.q }}"
         >
+        
 
+        <!-- Image search input -->
+        <input
+            type="file"
+            id="imageSearch"
+            name="img"
+            accept="image/*"
+            hidden>
+
+        <label for="imageSearch" class="image-upload-btn" title="Search by image">
+            <i class="bi bi-image"></i>
+        </label>
+
+        
         <!-- Image search button -->
-        <button class="btn btn-outline-secondary" type="button" title="Search by image">
-        <i class="bi bi-camera"></i>
+        <button class="btn btn-outline-secondary" type="submit" title="Search by image">
+            <i class="bi bi-search"></i>
         </button>
+
 
     </div>
     </form>
@@ -54,5 +87,240 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
+    </div>
+    {% endif %} {% endcomment %}
+
+
+    <style>
+    .image-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        cursor: pointer;
+        background: #fff;
+        font-size: 18px;
+    }
+
+    /* Image Preview Modal */
+    .img-preview-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1055;
+        align-items: center;
+        justify-content: center;
+    }
+    .img-preview-overlay.active {
+        display: flex;
+    }
+    .img-preview-box {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        width: 420px;
+        max-width: 95vw;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        position: relative;
+    }
+    .img-preview-box h6 {
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+    .img-preview-box .preview-img-wrap {
+        width: 100%;
+        height: 220px;
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #f8f9fa;
+        margin-bottom: 16px;
+    }
+    .img-preview-box .preview-img-wrap img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+    .img-preview-box .preview-img-wrap .placeholder-text {
+        color: #adb5bd;
+        font-size: 14px;
+        text-align: center;
+    }
+    .img-preview-close {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #6c757d;
+    }
+    .img-preview-close:hover {
+        color: #000;
+    }
+    .img-file-name {
+        font-size: 12px;
+        color: #6c757d;
+        margin-bottom: 12px;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{% url 'landing_page' %}">
+            <i class="bi bi-search"></i> Khojne Sathi
+        </a>
+
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-3">
+                <li class="nav-item"><a class="nav-link active" href="{% url 'user_dashboard' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'landing_page' %}#how-it-works">How it works</a></li>
+            </ul>
+
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <a href="{% url 'report_found' %}">
+                    <button class="btn btn-success btn-sm">+ Found</button>
+                </a>
+                <a href="{% url 'report_lost' %}">
+                    <button class="btn btn-danger btn-sm">− Lost</button>
+                </a>
+
+                <form id="searchForm" class="d-flex align-items-center ms-2 search-box" method="POST" action="{% url 'search_page' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="input-group input-group-sm">
+                        <input
+                            type="search"
+                            class="form-control"
+                            placeholder="Search items"
+                            name="q"
+                            value="{{ request.POST.q }}"
+                        >
+
+                        <input
+                            type="file"
+                            id="imageSearch"
+                            name="img"
+                            accept="image/*"
+                            hidden
+                        >
+
+                        <!-- Camera icon opens preview modal -->
+                        <label for="imageSearch" class="image-upload-btn" title="Search by image" id="imageSearchLabel">
+                            <i class="bi bi-image"></i>
+                        </label>
+
+                        <button class="btn btn-outline-secondary" type="submit" title="Search">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <a href="{% url 'profile' %}"><i class="bi bi-person-circle fs-4 ms-2"></i></a>
+            </div>
         </div>
-    {% endif %}
+    </div>
+</nav>
+
+<!-- Image Preview Modal (outside navbar) -->
+<div class="img-preview-overlay" id="imgPreviewOverlay">
+    <div class="img-preview-box">
+        <button class="img-preview-close" id="imgPreviewClose" type="button">&times;</button>
+        <h6><i class="bi bi-image me-2"></i>Search by Image</h6>
+
+        <div class="preview-img-wrap" id="previewImgWrap">
+            <div class="placeholder-text">
+                <i class="bi bi-cloud-upload fs-2 d-block mb-2"></i>
+                No image selected
+            </div>
+        </div>
+
+        <div class="img-file-name" id="imgFileName"></div>
+
+        <div class="d-flex gap-2">
+            <label for="imageSearch" class="btn btn-outline-secondary btn-sm flex-grow-1" style="cursor:pointer;">
+                <i class="bi bi-folder2-open me-1"></i> Change Image
+            </label>
+            <button type="button" class="btn btn-primary btn-sm flex-grow-1" id="imgSearchSubmit">
+                <i class="bi bi-search me-1"></i> Search
+            </button>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+    const imageInput     = document.getElementById('imageSearch');
+    const overlay        = document.getElementById('imgPreviewOverlay');
+    const closeBtn       = document.getElementById('imgPreviewClose');
+    const previewWrap    = document.getElementById('previewImgWrap');
+    const fileNameEl     = document.getElementById('imgFileName');
+    const submitBtn      = document.getElementById('imgSearchSubmit');
+    const searchForm     = document.getElementById('searchForm');
+
+    // When a file is selected, show the modal with preview
+    imageInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewWrap.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+
+        fileNameEl.textContent = file.name;
+        overlay.classList.add('active');
+    });
+
+    // Close modal — also clears the file input
+    closeBtn.addEventListener('click', function () {
+        overlay.classList.remove('active');
+        imageInput.value = '';
+        previewWrap.innerHTML = `
+            <div class="placeholder-text">
+                <i class="bi bi-cloud-upload fs-2 d-block mb-2"></i>
+                No image selected
+            </div>`;
+        fileNameEl.textContent = '';
+    });
+
+    // Close on backdrop click
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeBtn.click();
+    });
+
+    // Submit the form from modal button
+    submitBtn.addEventListener('click', function () {
+        overlay.classList.remove('active');
+        searchForm.submit();
+    });
+</script>
